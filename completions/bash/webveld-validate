@@ -1,0 +1,22 @@
+# bash completion for webveld-validate
+
+_webveld_validate() {
+    local cur prev words cword
+    _init_completion || return
+
+    case "$cur" in
+        --format=*)
+            COMPREPLY=($(compgen -W 'text json' -P '--format=' -- "${cur#--format=}"))
+            return 0
+            ;;
+        --*)
+            COMPREPLY=($(compgen -W '--classify --css --format=' -- "$cur"))
+            [[ ${COMPREPLY[0]} == *= ]] && compopt -o nospace
+            return 0
+            ;;
+    esac
+
+    # Complete HTML documents and style sheets
+    _filedir '@(htm|html|css)'
+} &&
+complete -F _webveld_validate webveld-validate webveld-validate.lua

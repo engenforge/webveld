@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Unit</title>
+    <style>
+      /* expect: unit `q` is not permitted (6.4) */
+      .card {
+        width: 50q;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="card">Test</p>
+  </body>
+</html>

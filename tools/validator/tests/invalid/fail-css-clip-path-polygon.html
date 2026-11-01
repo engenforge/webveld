@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Clip-Path Shape</title>
+    <style>
+      /* expect: value `polygon(0 0, 100% 0, 100% 100%, 0 100%)` is not permitted for `clip-path` (6.2) */
+      .card {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <p class="card">Test</p>
+  </body>
+</html>

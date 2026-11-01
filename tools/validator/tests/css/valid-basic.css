@@ -1,0 +1,7 @@
+/* A conforming style sheet: every property is in the section 6.2 allowlist. */
+html { color: #212529; background-color: #ffffff; }
+.listing { width: 100%; border-collapse: collapse; }
+pre { overflow-x: auto; white-space: pre; }
+@media (prefers-color-scheme: dark) {
+	html { color: #dadadb; background-color: #1d1e20; }
+}

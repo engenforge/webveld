@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Var</title>
+    <style>
+      /* expect: var() is forbidden; custom properties are outside the subset (6.7) */
+      p {
+        color: var(--theme-color);
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

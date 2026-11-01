@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Align-Items Baseline</title>
+    <style>
+      /* expect: value `baseline` is not permitted for `align-items` (6.2) */
+      .flex-box {
+        display: flex;
+        align-items: baseline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flex-box"><p>Test</p></div>
+  </body>
+</html>

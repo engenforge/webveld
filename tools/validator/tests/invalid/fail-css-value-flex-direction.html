@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Flex-Direction Value</title>
+    <style>
+      /* expect: value `diagonal` is not permitted for `flex-direction` (6.2) */
+      .flex-box {
+        display: flex;
+        flex-direction: diagonal;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flex-box"><p>Test</p></div>
+  </body>
+</html>

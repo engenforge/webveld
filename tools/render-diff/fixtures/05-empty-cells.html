@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gap Test: empty-cells</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    table { border-collapse: separate; empty-cells: show; border: 2px solid #333; margin-bottom: 20px; }
+    .hide-cells { empty-cells: hide; }
+    td { border: 2px solid red; padding: 10px; width: 60px; height: 30px; }
+  </style>
+</head>
+<body>
+  <h1>empty-cells Test</h1>
+  <h2>empty-cells: show (borders visible on empty cell)</h2>
+  <table>
+    <tr><td>A1</td><td></td><td>A3</td></tr>
+    <tr><td>B1</td><td>B2</td><td>B3</td></tr>
+  </table>
+  <h2>empty-cells: hide (middle cell borders hidden)</h2>
+  <table class="hide-cells">
+    <tr><td>A1</td><td></td><td>A3</td></tr>
+    <tr><td>B1</td><td>B2</td><td>B3</td></tr>
+  </table>
+</body>
+</html>

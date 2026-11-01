@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-css-media-range</title>
+    <!-- expect: media query range syntax is forbidden; use min-width or max-width (6.6) -->
+    <style>@media (width <= 600px) { p { color: red; } }</style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

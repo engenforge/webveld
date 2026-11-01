@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Unit Second</title>
+    <style>
+      /* expect: unit `s` is not permitted (6.4) */
+      .card {
+        line-height: 2s;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="card">Test</p>
+  </body>
+</html>

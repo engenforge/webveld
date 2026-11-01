@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Valid Media Queries and Web Fonts</title>
+    <style>
+      @font-face {
+        font-family: "CustomFont";
+        src: url("/fonts/custom.woff2");
+      }
+      body {
+        font-family: "CustomFont", sans-serif;
+        color: #222;
+        background-color: #fff;
+      }
+      @media (min-width: 600px) {
+        body {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          color: #eee;
+          background-color: #111;
+        }
+      }
+      @media print {
+        body {
+          color: #000;
+          background-color: #fff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Document testing valid media queries and font face declarations.</p>
+  </body>
+</html>

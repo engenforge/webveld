@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-css-revert</title>
+    <!-- expect: value `revert` is not permitted for `display` (6.2) -->
+    <style>p { display: revert; }</style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

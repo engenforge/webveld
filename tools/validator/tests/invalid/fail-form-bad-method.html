@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Form Bad Method</title>
+  </head>
+  <body>
+    <!-- expect: form method must be get or post (5.2) -->
+    <form action="/api" method="delete">
+      <button type="submit">Delete</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Text-browser case: hiding mechanisms</title>
+  <style>
+    .dn { display: none; }
+    .vh { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
+    .ov { width: 1px; height: 1px; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <p>VISIBLE-BASELINE</p>
+  <p class="dn">DISPLAY-NONE-TEXT</p>
+  <p class="vh">CLIPPATH-VISUALLY-HIDDEN-TEXT</p>
+  <p class="ov">OVERFLOW-HIDDEN-1PX-TEXT</p>
+  <p aria-hidden="true">ARIA-HIDDEN-TEXT</p>
+</body>
+</html>

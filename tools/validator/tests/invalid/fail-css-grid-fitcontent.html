@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Grid Subset Bound</title>
+    <style>
+      /* expect: fit-content() is forbidden in a track list */
+      .layout { display: grid; grid-template-columns: fit-content(20rem) 1fr; }
+    </style>
+  </head>
+  <body>
+    <h1>Outside the bounded grid subset</h1>
+    <p>Spec 6.2 admits track sizing through minmax(), not fit-content().</p>
+  </body>
+</html>

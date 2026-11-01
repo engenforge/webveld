@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Grid Subset Bound</title>
+    <style>
+      /* expect: grid-template-areas is forbidden */
+      .g{display:grid;grid-template-areas:"a b";grid-template-columns:1fr 1fr}
+    </style>
+  </head>
+  <body>
+    <h1>Outside the bounded grid subset</h1>
+    <p>Spec 6.2 admits grid only as a bounded subset.</p>
+  </body>
+</html>

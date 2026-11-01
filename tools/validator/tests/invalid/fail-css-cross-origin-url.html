@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Cross Origin Background Forbidden</title>
+    <style>
+      /* expect: absolute URL in url() */
+      body { background-image: url("https://cdn.example.com/paper.png"); }
+    </style>
+  </head>
+  <body>
+    <h1>Remote background</h1>
+    <p>Embedded subresources must be same-origin (spec 7.2).</p>
+  </body>
+</html>

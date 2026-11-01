@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Import</title>
+    <style>
+      /* expect: @import is forbidden (6.7) */
+      @import url("other.css");
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

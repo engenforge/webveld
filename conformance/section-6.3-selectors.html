@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Section 6.3: Conformance Suite — Allowed Selectors</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC">
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #1a202c;
+        background-color: #f7fafc;
+      }
+      header, footer, main, section {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+      }
+      header {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+      }
+      h1 { font-size: 26px; color: #2b6cb0; margin: 0 0 10px 0; }
+      h2 { font-size: 20px; color: #2c5282; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      h3 { font-size: 16px; color: #4a5568; margin: 12px 0 6px 0; }
+      p { margin: 8px 0; }
+      .card {
+        border: 2px solid #cbd5e0;
+        padding: 14px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+
+      /* Baseline element styling */
+      .item {
+        padding: 10px 14px;
+        margin: 6px 0;
+        border: 2px solid #cbd5e0;
+        background-color: #edf2f7;
+        color: #4a5568;
+      }
+      .matched {
+        border-color: #22543d;
+        background-color: #c6f6d5;
+        color: #22543d;
+        font-weight: bold;
+      }
+
+      /* --- 1. Type, Class, ID, Universal --- */
+      p.sel-type {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        font-weight: bold;
+      }
+      .sel-class {
+        border-color: #805ad5;
+        background-color: #faf5ff;
+        color: #805ad5;
+        font-weight: bold;
+      }
+      #sel-id {
+        border-color: #dd6b20;
+        background-color: #fffaf0;
+        color: #dd6b20;
+        font-weight: bold;
+      }
+      .universal-box * {
+        border-left: 6px solid #e53e3e;
+        padding-left: 8px;
+      }
+
+      /* --- 2. Combinators --- */
+      /* Descendant: div p */
+      .comb-descendant p {
+        background-color: #feebc8;
+        border: 2px solid #dd6b20;
+        color: #7b341e;
+        font-weight: bold;
+      }
+      /* Child: div > p */
+      .comb-child > p {
+        background-color: #c6f6d5;
+        border: 2px solid #276749;
+        color: #22543d;
+        font-weight: bold;
+      }
+      /* Adjacent sibling: h1 + p */
+      .comb-adj-lead + p {
+        background-color: #e9d8fd;
+        border: 3px solid #6b46c1;
+        color: #44337a;
+        font-weight: bold;
+      }
+      /* General sibling: h1 ~ p */
+      .comb-gen-lead ~ p {
+        background-color: #fed7d7;
+        border: 2px solid #e53e3e;
+        color: #742a2a;
+        font-weight: bold;
+      }
+
+      /* --- 3. Selector Lists --- */
+      .list-item-a, .list-item-b, .list-item-c {
+        background-color: #bee3f8;
+        border: 2px solid #2b6cb0;
+        color: #2c5282;
+        font-weight: bold;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      /* --- 4. Attribute Selectors --- */
+      /* [attr] */
+      [title] {
+        border-left: 8px solid #3182ce;
+      }
+      /* [attr="value"] */
+      [title="active"] {
+        background-color: #c6f6d5;
+        border-color: #276749;
+        color: #22543d;
+        font-weight: bold;
+      }
+      /* [attr^="value"] */
+      [title^="pre-"] {
+        background-color: #feebc8;
+        border-color: #dd6b20;
+        color: #7b341e;
+        font-weight: bold;
+      }
+      /* [attr$="value"] */
+      [title$="-post"] {
+        background-color: #e9d8fd;
+        border-color: #6b46c1;
+        color: #44337a;
+        font-weight: bold;
+      }
+      /* [attr*="value"] */
+      [title*="mid"] {
+        background-color: #fed7d7;
+        border-color: #e53e3e;
+        color: #742a2a;
+        font-weight: bold;
+      }
+
+      /* --- 5. Pseudo-Classes (14) --- */
+      /* :link and :visited */
+      a.test-link:link {
+        color: #2b6cb0;
+        background-color: #ebf8ff;
+        border: 2px solid #3182ce;
+        padding: 6px 12px;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+      a.test-visited:visited {
+        color: #6b46c1;
+        background-color: #faf5ff;
+        border-color: #805ad5;
+        outline-color: #9f7aea;
+      }
+      /* :hover, :focus, :active */
+      .btn-state:hover {
+        background-color: #bee3f8;
+        border-color: #2b6cb0;
+      }
+      .btn-state:focus {
+        background-color: #feebc8;
+        border-color: #dd6b20;
+        outline: 3px solid #dd6b20;
+      }
+      .btn-state:active {
+        background-color: #fed7d7;
+        border-color: #e53e3e;
+      }
+
+      /* :target */
+      #target-box:target {
+        background-color: #fefcbf;
+        border: 6px solid #d69e2e;
+        color: #744210;
+        font-weight: bold;
+      }
+
+      /* :first-child & :last-child */
+      .child-list .item:first-child {
+        border-top: 6px solid #3182ce;
+        background-color: #ebf8ff;
+        font-weight: bold;
+      }
+      .child-list .item:last-child {
+        border-bottom: 6px solid #e53e3e;
+        background-color: #fed7d7;
+        font-weight: bold;
+      }
+
+      /* :nth-child */
+      .nth-odd-list .item:nth-child(odd) {
+        background-color: #c6f6d5;
+        border-color: #38a169;
+      }
+      .nth-even-list .item:nth-child(even) {
+        background-color: #feebc8;
+        border-color: #dd6b20;
+      }
+      .nth-int-list .item:nth-child(3) {
+        background-color: #e9d8fd;
+        border: 4px solid #805ad5;
+        font-weight: bold;
+      }
+      .nth-formula-list .item:nth-child(3n+1) {
+        background-color: #bee3f8;
+        border-left: 8px solid #2b6cb0;
+        font-weight: bold;
+      }
+
+      /* :checked */
+      input.chk-toggle:checked + label {
+        background-color: #22543d;
+        color: #ffffff;
+        font-weight: bold;
+        border-color: #22543d;
+      }
+      input.chk-toggle:checked ~ .disclosure-content {
+        display: block;
+        background-color: #c6f6d5;
+        border: 2px solid #276749;
+        color: #22543d;
+        padding: 12px;
+        margin-top: 8px;
+        font-weight: bold;
+      }
+      .disclosure-content {
+        display: none;
+      }
+
+      /* :disabled */
+      input:disabled {
+        background-color: #e2e8f0;
+        border: 2px dashed #a0aec0;
+        color: #a0aec0;
+      }
+      /* :required */
+      input:required {
+        border-left: 6px solid #3182ce;
+      }
+      /* :valid and :invalid */
+      input:valid {
+        background-color: #f0fff4;
+        border: 2px solid #38a169;
+      }
+      input:invalid {
+        background-color: #fff5f5;
+        border: 2px solid #e53e3e;
+      }
+
+      /* --- 6. Pseudo-Elements (4) --- */
+      .pe-before::before {
+        content: "▶ [BEFORE] ";
+        color: #2b6cb0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .pe-after::after {
+        content: " [AFTER] ◀";
+        color: #c53030;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .pe-line::first-line {
+        font-size: 20px;
+        font-weight: bold;
+        color: #276749;
+        text-transform: uppercase;
+      }
+      .pe-letter::first-letter {
+        font-size: 42px;
+        font-weight: 900;
+        color: #9b2c2c;
+        
+        line-height: 1;
+        margin-right: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Section 6.3: Allowed Selectors Conformance Test</h1>
+      <p>Exercises all selectors permitted by Section 6.3: type, class, ID, universal, combinators, selector lists, attribute selectors, every pseudo-class and pseudo-element.</p>
+    </header>
+
+    <main>
+      <!-- ================= 1. TYPE, CLASS, ID, UNIVERSAL ================= -->
+      <section id="sec-basic">
+        <h2>1. Type, Class, ID, Universal</h2>
+        <div class="card">
+          <p class="sel-type">Type selector: <code>p.sel-type</code> (blue background)</p>
+          <div class="sel-class">Class selector: <code>.sel-class</code> (purple background)</div>
+          <div id="sel-id">ID selector: <code>#sel-id</code> (orange background)</div>
+          <div class="universal-box">
+            <h3>Universal Selector Test (<code>.universal-box *</code>)</h3>
+            <p>Child 1 inside universal-box (red left border)</p>
+            <div>Child 2 inside universal-box (red left border)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. COMBINATORS ================= -->
+      <section id="sec-combinators">
+        <h2>2. Combinators</h2>
+        <div class="card">
+          <h3>Descendant Combinator (<code>.comb-descendant p</code>)</h3>
+          <div class="comb-descendant">
+            <div>
+              <p>Descendant paragraph inside nested div (orange styling applied)</p>
+            </div>
+          </div>
+
+          <h3>Child Combinator (<code>.comb-child &gt; p</code>)</h3>
+          <div class="comb-child">
+            <p>Direct child paragraph (green styling applied)</p>
+            <div>
+              <p>Grandchild paragraph (must NOT receive direct child styling)</p>
+            </div>
+          </div>
+
+          <h3>Adjacent Sibling Combinator (<code>.comb-adj-lead + p</code>)</h3>
+          <div>
+            <div class="comb-adj-lead item">Adjacent Reference Element</div>
+            <p>Immediately adjacent paragraph (purple border &amp; background applied)</p>
+            <p>Second paragraph (must NOT receive adjacent styling)</p>
+          </div>
+
+          <h3>General Sibling Combinator (<code>.comb-gen-lead ~ p</code>)</h3>
+          <div>
+            <div class="comb-gen-lead item">General Sibling Reference Element</div>
+            <div>Non-paragraph element</div>
+            <p>First sibling paragraph (red styling applied)</p>
+            <p>Second sibling paragraph (red styling applied)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. SELECTOR LISTS ================= -->
+      <section id="sec-selector-lists">
+        <h2>3. Selector Lists (Comma-Separated)</h2>
+        <div class="card">
+          <div class="list-item-a">Selector list item A (<code>.list-item-a</code>)</div>
+          <div class="list-item-b">Selector list item B (<code>.list-item-b</code>)</div>
+          <div class="list-item-c">Selector list item C (<code>.list-item-c</code>)</div>
+        </div>
+      </section>
+
+      <!-- ================= 4. ATTRIBUTE SELECTORS ================= -->
+      <section id="sec-attribute-selectors">
+        <h2>4. Attribute Selectors</h2>
+        <div class="card">
+          <div class="item" title>Presence: <code>[title]</code> (thick blue left border)</div>
+          <div class="item" title="active">Exact: <code>[title="active"]</code> (green styling)</div>
+          <div class="item" title="pre-test">Prefix: <code>[title^="pre-"]</code> (orange styling)</div>
+          <div class="item" title="test-post">Suffix: <code>[title$="-post"]</code> (purple styling)</div>
+          <div class="item" title="sub-mid-word">Substring: <code>[title*="mid"]</code> (red styling)</div>
+        </div>
+      </section>
+
+      <!-- ================= 5. PSEUDO-CLASSES ================= -->
+      <section id="sec-pseudo-classes">
+        <h2>5. Every Pseudo-Class</h2>
+        <div class="card">
+          <h3>:link and :visited</h3>
+          <p>
+            <a class="test-link" href="https://example.com/unvisited-conformance-link">Unvisited link (:link)</a>
+            <a class="test-link test-visited" href="section-6.3-selectors.html">Self-referencing visited link (:visited)</a>
+          </p>
+
+          <h3>:hover, :focus, :active</h3>
+          <p>
+            <button type="button" class="btn-state item">Interactive Button (:hover, :focus, :active)</button>
+          </p>
+
+          <h3>:target</h3>
+          <p>
+            <a href="#target-box">Click here to activate :target fragment anchor</a>
+          </p>
+          <div id="target-box" class="item">
+            Anchor target container (highlights bright yellow when URL ends in #target-box)
+          </div>
+
+          <h3>:first-child and :last-child</h3>
+          <div class="child-list">
+            <div class="item">Item 1 (:first-child — thick blue top border)</div>
+            <div class="item">Item 2 (middle item)</div>
+            <div class="item">Item 3 (:last-child — thick red bottom border)</div>
+          </div>
+
+          <h3>:nth-child (odd, even, integer, an+b formula)</h3>
+          <h4>:nth-child(odd)</h4>
+          <div class="nth-odd-list">
+            <div class="item">Row 1 (odd - green)</div>
+            <div class="item">Row 2</div>
+            <div class="item">Row 3 (odd - green)</div>
+          </div>
+
+          <h4>:nth-child(even)</h4>
+          <div class="nth-even-list">
+            <div class="item">Row 1</div>
+            <div class="item">Row 2 (even - orange)</div>
+            <div class="item">Row 3</div>
+          </div>
+
+          <h4>:nth-child(3)</h4>
+          <div class="nth-int-list">
+            <div class="item">Row 1</div>
+            <div class="item">Row 2</div>
+            <div class="item">Row 3 (exact 3rd - purple border)</div>
+            <div class="item">Row 4</div>
+          </div>
+
+          <h4>:nth-child(3n+1)</h4>
+          <div class="nth-formula-list">
+            <div class="item">Row 1 (3*0+1 = 1 - blue border)</div>
+            <div class="item">Row 2</div>
+            <div class="item">Row 3</div>
+            <div class="item">Row 4 (3*1+1 = 4 - blue border)</div>
+          </div>
+
+          <h3>:checked (Checkbox disclosure pattern)</h3>
+          <div>
+            <input type="checkbox" id="chk-toggle-1" class="chk-toggle">
+            <label for="chk-toggle-1" class="item">Click label to toggle :checked state</label>
+            <div class="disclosure-content">
+              Expanded content revealed via <code>input:checked ~ .disclosure-content</code>!
+            </div>
+          </div>
+
+          <h3>:disabled, :required, :valid, :invalid</h3>
+          <form action="https://example.com/check-forms" method="post">
+            <p>
+              <label for="f-dis">Disabled input (:disabled):</label><br>
+              <input type="text" id="f-dis" name="f_dis" value="Disabled text" disabled>
+            </p>
+            <p>
+              <label for="f-req">Required input (:required):</label><br>
+              <input type="text" id="f-req" name="f_req" value="Required text" required>
+            </p>
+            <p>
+              <label for="f-val">Valid email (:valid):</label><br>
+              <input type="email" id="f-val" name="f_val" value="test@example.com" required>
+            </p>
+            <p>
+              <label for="f-inval">Invalid email (:invalid):</label><br>
+              <input type="email" id="f-inval" name="f_inval" value="not-an-email" required>
+            </p>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= 6. PSEUDO-ELEMENTS ================= -->
+      <section id="sec-pseudo-elements">
+        <h2>6. All 4 Pseudo-Elements</h2>
+        <div class="card">
+          <h3>::before and ::after</h3>
+          <div class="pe-before pe-after item">Target content with generated before and after content.</div>
+
+          <h3>::first-line</h3>
+          <p class="pe-line item">
+            First line of this paragraph is rendered large, bold, uppercase and green by ::first-line.<br>
+            Second line of this paragraph returns to standard typography and color.
+          </p>
+
+          <h3>::first-letter</h3>
+          <p class="pe-letter item">
+            Large initial drop-cap letter styled by ::first-letter pseudo-element. The remaining text flows around the prominent crimson initial character cleanly.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 6.3 Selectors</p>
+    </footer>
+  </body>
+</html>

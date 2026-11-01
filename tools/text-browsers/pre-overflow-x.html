@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Text-browser case: long lines in pre, with overflow-x</title>
+  <style>
+    pre { overflow-x: auto; white-space: pre; }
+  </style>
+</head>
+<body>
+  <p>Prose before. This paragraph is ordinary flowing text that should wrap at the render width in every browser under test.</p>
+  <pre tabindex="0"><code data-lang="c">static int webveld_validate_document(struct wv_parser *p, const struct wv_profile *profile, unsigned int flags, char **errmsg)
+{
+    if (p == NULL || profile == NULL) {
+        return WV_EINVAL;
+    }
+    for (size_t i = 0; i &lt; p-&gt;element_count; i++) {
+        if (!wv_profile_permits_element(profile, p-&gt;elements[i].tag, p-&gt;elements[i].namespace_id, flags)) {
+            return wv_report_violation(p, i, WV_ERR_ELEMENT_NOT_PERMITTED, errmsg);
+        }
+    }
+    return WV_OK;
+}
+</code></pre>
+  <p>Prose after, to show whether the paragraph column survived whatever the code block did.</p>
+</body>
+</html>

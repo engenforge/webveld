@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Form Hidden and Submit Inputs</title>
+  </head>
+  <body>
+    <form action="/submit" method="post">
+      <input type="hidden" name="csrf_token" value="abc123xyz">
+      <input type="hidden" name="session_id" value="sess456">
+      <p>
+        <label for="username-field">Username</label>
+        <input type="text" id="username-field" name="username" required>
+      </p>
+      <p>
+        <label for="email-field">Email</label>
+        <input type="email" id="email-field" name="email" required>
+      </p>
+      <p>
+        <input type="submit" value="Submit Form">
+        <input type="reset" value="Reset Form">
+      </p>
+    </form>
+  </body>
+</html>

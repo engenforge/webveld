@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Unlabeled Input</title>
+  </head>
+  <body>
+    <!-- expect: 2 labelable inputs but only 1 <label> elements (9) -->
+    <form action="/submit" method="post">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name">
+      <input type="text" id="extra" name="extra">
+    </form>
+  </body>
+</html>

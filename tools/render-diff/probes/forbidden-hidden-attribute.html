@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Probe: hidden attribute (NOT WebVeld-conforming)</title>
+</head>
+<body>
+  <p>This document is deliberately NOT WebVeld-conforming. Section 5.3 forbids the
+     <code>hidden</code> attribute and directs authors to CSS <code>display: none</code>
+     instead, so no conforming document can contain it. It exists to characterize
+     what engines do with it — see
+     <code>doc/research/text-browser-assessment.md</code>, which records that Lynx, w3m and
+     Links all ignore it and render the content.</p>
+  <p>VISIBLE-BASELINE</p>
+  <p hidden>HIDDEN-ATTR-TEXT</p>
+</body>
+</html>

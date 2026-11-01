@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Grid Subset and Disclosure</title>
+    <style>
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(12rem, 1fr));
+        grid-template-rows: auto auto;
+        gap: 1rem;
+      }
+      .feature { grid-column: 1 / span 2; grid-row: 1; }
+      .aside { grid-column: 3; grid-row-start: 1; grid-row-end: 3; }
+      details { border: 1px solid #ccc; padding: 0.5rem; }
+      details[open] summary { font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <h1>Bounded grid</h1>
+    <main class="cards">
+      <section class="feature"><h2>Feature</h2><p>Explicitly placed, spanning two tracks.</p></section>
+      <aside class="aside"><h2>Aside</h2><p>Placed by line number.</p></aside>
+      <section><h2>Flowed</h2><p>No explicit placement, so auto-placed.</p></section>
+    </main>
+    <details open>
+      <summary>What this page exercises</summary>
+      <p>Track lists with <code>minmax()</code> and a literal <code>repeat()</code>, explicit line placement, row auto-placement, and native disclosure.</p>
+    </details>
+  </body>
+</html>

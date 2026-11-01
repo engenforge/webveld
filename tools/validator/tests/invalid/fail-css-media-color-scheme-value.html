@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-css-media-color-scheme-value</title>
+    <!-- expect: prefers-color-scheme must be light or dark (6.6) -->
+    <style>@media (prefers-color-scheme: no-preference) { p { color: red; } }</style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

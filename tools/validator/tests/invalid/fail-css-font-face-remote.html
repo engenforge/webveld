@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Remote Font Face</title>
+    <style>
+      @font-face {
+        font-family: "GoogleFont";
+        /* expect: cross-origin URL in @font-face src is forbidden (6.5, 7.3) */
+        src: url("https://fonts.gstatic.com/s/roboto/v30/test.woff2");
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

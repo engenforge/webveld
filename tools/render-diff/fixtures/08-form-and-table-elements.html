@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gap Test: Form &amp; Table Elements</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    fieldset { margin-bottom: 15px; border: 1px solid #999; padding: 10px; }
+    legend { font-weight: bold; }
+    label { display: block; margin: 6px 0; }
+    table { border-collapse: collapse; margin-top: 15px; width: 100%; }
+    th, td { border: 1px solid #aaa; padding: 6px; }
+    caption { font-weight: bold; margin-bottom: 4px; }
+    details { margin: 10px 0; border: 1px solid #ccc; padding: 6px; }
+    .col-gray { background-color: #f0f0f0; }
+    .col-white { background-color: #ffffff; }
+  </style>
+</head>
+<body>
+  <h1>Form &amp; Table Elements Test</h1>
+  <form action="https://example.com/submit" method="post">
+    <fieldset>
+      <legend>Account Inputs</legend>
+      <label>Username: <input type="text" value="user123"></label>
+      <label>Password: <input type="password" value="secret123"></label>
+      <label>Email: <input type="email" value="user@example.com"></label>
+      <label>URL: <input type="url" value="https://example.com"></label>
+      <label>Number: <input type="number" value="42"></label>
+      <label>Date: <input type="date" value="2026-09-08"></label>
+      <label><input type="checkbox" checked> Remember me</label>
+      <label><input type="radio" name="opt" checked> Option A</label>
+      <label><input type="radio" name="opt"> Option B</label>
+      <label>Role:
+        <select>
+          <optgroup label="Admin">
+            <option selected>Superuser</option>
+            <option>Editor</option>
+          </optgroup>
+          <optgroup label="General">
+            <option>Reader</option>
+          </optgroup>
+        </select>
+      </label>
+      <button type="submit">Submit</button>
+      <button type="reset">Reset</button>
+    </fieldset>
+  </form>
+
+  <details>
+    <summary>Expandable Details</summary>
+    <p>This is the content inside the details element.</p>
+  </details>
+
+  <table>
+    <caption>User Registry (caption)</caption>
+    <colgroup>
+      <col class="col-gray">
+      <col class="col-white">
+    </colgroup>
+    <thead>
+      <tr><th>ID</th><th>Name</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Alice</td></tr>
+      <tr><td>2</td><td>Bob</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>Total</td><td>2 users</td></tr>
+    </tfoot>
+  </table>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gap Test: white-space</title>
+  <style>
+    body { font-family: monospace; margin: 20px; }
+    .box { width: 300px; border: 2px solid #555; margin-bottom: 15px; padding: 6px; background: #fafafa; }
+    .pre { white-space: pre; }
+    .pre-wrap { white-space: pre-wrap; }
+    .pre-line { white-space: pre-line; }
+    .nowrap { white-space: nowrap; }
+    .normal { white-space: normal; }
+  </style>
+</head>
+<body>
+  <h1>white-space Test</h1>
+  <h2>white-space: normal</h2>
+  <div class="box normal">Line 1    multiple   spaces
+  and a new line that flows and wraps when reaching boundary.</div>
+
+  <h2>white-space: pre</h2>
+  <div class="box pre">Line 1    multiple   spaces
+  and a new line that overflows boundary without wrapping.</div>
+
+  <h2>white-space: pre-wrap</h2>
+  <div class="box pre-wrap">Line 1    multiple   spaces
+  and a new line that wraps when reaching the container boundary.</div>
+
+  <h2>white-space: pre-line</h2>
+  <div class="box pre-line">Line 1    multiple   spaces collapsed
+  and a new line preserved that wraps when reaching container boundary.</div>
+
+  <h2>white-space: nowrap</h2>
+  <div class="box nowrap">Line 1 multiple spaces collapsed and no wrapping even if long text overflows box.</div>
+</body>
+</html>

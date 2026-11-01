@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Content Selector</title>
+    <style>
+      /* expect: content property is permitted only on ::before and ::after (6.2) */
+      p {
+        content: "prefix";
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

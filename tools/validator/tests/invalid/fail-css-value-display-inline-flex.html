@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Display Value Inline-Flex</title>
+    <style>
+      /* expect: value `inline-flex` is not permitted for `display` (6.2) */
+      .toolbar {
+        display: inline-flex;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar"><p>Test</p></div>
+  </body>
+</html>

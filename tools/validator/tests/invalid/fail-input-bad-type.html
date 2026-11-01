@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Input Bad Type</title>
+  </head>
+  <body>
+    <form action="/submit" method="post">
+      <label for="color">Color</label>
+      <!-- expect: input type="color" is not permitted (5.2) -->
+      <input type="color" id="color" name="color">
+    </form>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+/* position and table-layout are both outside the section 6.2 allowlist. */
+.thing { position: absolute; }
+table { table-layout: fixed; }

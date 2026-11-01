@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Bank Authentication Required</title>
+  <style>
+    body {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      font-family: sans-serif;
+      background: #f7f9fc;
+      line-height: 1.6;
+    }
+    
+    .auth-container {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .bank-logo {
+      width: 80px;
+      height: 80px;
+      background: #e3f2fd;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    
+    h1 {
+      color: #1a1a1a;
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+    }
+    
+    .bank-name {
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    
+    .info-box {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    
+    .transaction-details {
+      background: #f7f9fc;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+      text-align: left;
+    }
+    
+    .transaction-row {
+      display: flex;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .transaction-row:last-child {
+      border-bottom: none;
+      font-weight: bold;
+    }
+    
+    .transaction-label {
+      flex: 1;
+      color: #666;
+    }
+    
+    .transaction-value {
+      color: #1a1a1a;
+    }
+    
+    .form-section {
+      margin: 2rem 0;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+      text-align: left;
+    }
+    
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      text-align: center;
+      letter-spacing: 0.5em;
+      font-weight: bold;
+    }
+    
+    input:focus {
+      border-color: #2196f3;
+    }
+    
+    .sms-info {
+      background: #e8f5e9;
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+      color: #2e7d32;
+    }
+    
+    button {
+      width: 100%;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    
+    button:hover {
+      background: #1976d2;
+    }
+    
+    .cancel-link {
+      display: block;
+      margin-top: 1rem;
+      color: #666;
+      text-decoration: none;
+      font-size: 0.875rem;
+    }
+    
+    .cancel-link:hover {
+      text-decoration: underline;
+    }
+    
+    .security-note {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="bank-logo">🏦</div>
+    <h1>Authentication Required</h1>
+    <p class="bank-name">Example Bank - Secure Verification</p>
+    
+    <div class="info-box">
+      <strong>Additional verification required</strong><br>
+      Your bank requires you to verify this transaction to ensure your security.
+    </div>
+    
+    <div class="transaction-details">
+      <div class="transaction-row">
+        <span class="transaction-label">Merchant</span>
+        <span class="transaction-value">YourStore.com</span>
+      </div>
+      <div class="transaction-row">
+        <span class="transaction-label">Card</span>
+        <span class="transaction-value">Visa ****3456</span>
+      </div>
+      <div class="transaction-row">
+        <span class="transaction-label">Amount</span>
+        <span class="transaction-value">$29.99 USD</span>
+      </div>
+    </div>
+    
+    <div class="sms-info">
+      ✓ SMS code sent to your phone ending in **89
+    </div>
+    
+    <form action="https://bank.example.com/verify-3ds" method="post">
+      <input type="hidden" name="session_id" value="3ds_abc123xyz">
+      <input type="hidden" name="return_url" value="https://payments.webveld.example/complete">
+      
+      <div class="form-section">
+        <label for="code">Enter 6-Digit Code</label>
+        <input 
+          type="text" 
+          id="code" 
+          name="verification_code" 
+          required 
+          pattern="[0-9]{6}"
+          maxlength="6"
+          placeholder="000000">
+      </div>
+      
+      <button type="submit">Verify and Complete Payment</button>
+      
+      <a href="https://payments.webveld.example/cancel" class="cancel-link">
+        Cancel Payment
+      </a>
+    </form>
+    
+    <p class="security-note">
+      🔒 This is a secure authentication page from your bank.<br>
+      Never share your verification code with anyone.
+    </p>
+  </div>
+</body>
+</html>

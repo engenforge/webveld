@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-input-checked-type</title>
+    <!-- expect: `checked` is permitted only on checkbox and radio inputs (5.2) -->
+
+  </head>
+  <body>
+    <form action="/s"><label>Name <input type="text" name="n" checked></label></form>
+  </body>
+</html>

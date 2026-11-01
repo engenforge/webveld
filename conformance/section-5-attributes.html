@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="doc-root" class="conformance-page" title="Section 5 Attributes">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="WebVeld section 5 attributes conformance suite">
+    <meta name="keywords" content="webveld, conformance, html, attributes">
+    <meta name="author" content="WebVeld Test Suite">
+    <meta name="color-scheme" content="light dark">
+    <meta name="generator" content="WebVeld Conformance Builder">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:title" content="Attributes Conformance">
+    <meta property="og:description" content="Exercise all section 5 attributes">
+    <title>Section 5: Conformance Suite — Attributes</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC" title="Favicon">
+    <link rel="alternate" type="text/html" href="section-5-attributes.html" title="Alternative">
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #2d3748;
+        background-color: #f7fafc;
+      }
+      header, footer, main, section {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+      }
+      header {
+        border-color: #3182ce;
+        background-color: #ebf8ff;
+      }
+      h1 { font-size: 26px; color: #2b6cb0; margin: 0 0 10px 0; }
+      h2 { font-size: 20px; color: #2c5282; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      h3 { font-size: 16px; color: #4a5568; margin: 12px 0 6px 0; }
+      p { margin: 8px 0; }
+      .test-card {
+        border: 2px solid #cbd5e0;
+        padding: 14px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+      .dir-box {
+        padding: 12px;
+        margin: 8px 0;
+        font-size: 18px;
+        border: 3px solid #4a5568;
+      }
+      .dir-ltr {
+        background-color: #ebf8ff;
+        border-left: 8px solid #3182ce;
+      }
+      .dir-rtl {
+        background-color: #feebc8;
+        border-right: 8px solid #dd6b20;
+      }
+      .tabindex-box {
+        padding: 10px;
+        margin: 6px 0;
+        border: 2px dashed #718096;
+        background-color: #edf2f7;
+      }
+      .tabindex-box:focus {
+        border-color: #e53e3e;
+        background-color: #fed7d7;
+      }
+      .a11y-box {
+        padding: 10px;
+        margin: 6px 0;
+        border: 2px solid #805ad5;
+        background-color: #faf5ff;
+      }
+      .reversed-list {
+        font-size: 18px;
+        font-weight: bold;
+        color: #c53030;
+        padding-left: 30px;
+      }
+      table.attr-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 12px 0;
+      }
+      table.attr-table th, table.attr-table td {
+        border: 2px solid #a0aec0;
+        padding: 8px;
+      }
+      table.attr-table thead th {
+        background-color: #2b6cb0;
+        color: #ffffff;
+      }
+      .img-wide {
+        border: 3px solid #38a169;
+      }
+      .img-square {
+        border: 3px solid #d69e2e;
+      }
+      form {
+        margin: 12px 0;
+        padding: 12px;
+        border: 2px solid #4a5568;
+        background-color: #f7fafc;
+      }
+      .form-row {
+        margin: 10px 0;
+      }
+      .form-row label {
+        display: inline-block;
+        width: 220px;
+        font-weight: bold;
+      }
+      input, textarea, select, button {
+        font-family: inherit;
+        font-size: 14px;
+        padding: 6px 8px;
+        border: 1px solid #a0aec0;
+      }
+      input[disabled], textarea[disabled], select[disabled], button[disabled] {
+        background-color: #e2e8f0;
+        color: #a0aec0;
+        cursor: default;
+      }
+      input[readonly], textarea[readonly] {
+        background-color: #edf2f7;
+        border-color: #cbd5e0;
+      }
+
+      /* Cell alignment: CSS replaces the obsolete `align` attribute (spec 5.3). */
+      .ta-left   { text-align: left; }
+      .ta-center { text-align: center; }
+      .ta-right  { text-align: right; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Section 5: Attributes Conformance Test</h1>
+      <p>Exercises all global attributes (§5.1) and element-specific attributes (§5.2) with exaggerated visual effects.</p>
+    </header>
+
+    <main>
+      <section id="sec-global">
+        <h2>1. Global Attributes (§5.1)</h2>
+
+        <div class="test-card" id="card-id-class" title="Card showing id and class">
+          <h3>id, class, title, and lang</h3>
+          <p lang="en">English text: The quick brown fox jumps over the lazy dog.</p>
+          <p lang="fr">Texte en français: Le renard brun saute par-dessus le chien paresseux.</p>
+          <p lang="de">Deutscher Text: Der schnelle braune Fuchs springt über den faulen Hund.</p>
+        </div>
+
+        <div class="test-card">
+          <h3>dir (ltr vs rtl) — Exaggerated Alignment</h3>
+          <div dir="ltr" class="dir-box dir-ltr">
+            <strong>dir="ltr"</strong>: Left-to-right English text, aligned left with thick blue left border.
+          </div>
+          <div dir="rtl" class="dir-box dir-rtl">
+            <strong>dir="rtl"</strong>: نص عربي من اليمين إلى اليسار ومحاذاة إلى اليمين بحدود برتقالية واضحة.
+          </div>
+        </div>
+
+        <div class="test-card">
+          <h3>tabindex (0 and -1)</h3>
+          <div tabindex="0" class="tabindex-box">
+            <code>tabindex="0"</code>: Sequentially focusable via Tab key (focus changes background to red).
+          </div>
+          <div tabindex="-1" class="tabindex-box">
+            <code>tabindex="-1"</code>: Only focusable programmatically or via click, excluded from sequential tab navigation.
+          </div>
+        </div>
+
+        <div class="test-card">
+          <h3>Accessibility Attributes (role, aria-*)</h3>
+          <div role="region" aria-label="Accessible Landmark Region" class="a11y-box">
+            <code>role="region" aria-label="..."</code>: Accessible region container.
+          </div>
+          <div id="label-source-1"><strong>Label Heading (ID: label-source-1)</strong></div>
+          <div role="group" aria-labelledby="label-source-1" class="a11y-box">
+            <code>role="group" aria-labelledby="label-source-1"</code>: Labeled by element above.
+          </div>
+          <div id="desc-source-1"><small>Advisory description note (ID: desc-source-1)</small></div>
+          <div aria-describedby="desc-source-1" class="a11y-box">
+            <code>aria-describedby="desc-source-1"</code>: Described by advisory note.
+          </div>
+          <div aria-hidden="true" class="a11y-box">
+            <code>aria-hidden="true"</code>: Decorative content hidden from accessibility tree.
+          </div>
+          <p>
+            <button type="button" aria-expanded="true" aria-controls="collapsible-panel-1">
+              Toggle Panel (aria-expanded="true" aria-controls="collapsible-panel-1")
+            </button>
+          </p>
+          <div id="collapsible-panel-1" class="a11y-box">
+            Controlled collapsible container content.
+          </div>
+        </div>
+      </section>
+
+      <section id="sec-element-specific">
+        <h2>2. Element-Specific Attributes (§5.2)</h2>
+
+        <div class="test-card">
+          <h3>Anchor (a): href, rel, hreflang</h3>
+          <p>
+            <a href="https://example.com/spec" rel="help" hreflang="en">Help Reference link with rel="help" and hreflang="en"</a>
+          </p>
+        </div>
+
+        <div class="test-card">
+          <h3>Image (img): src, alt, width, height</h3>
+          <p>
+            <img class="img-wide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC" alt="Wide test banner" width="200" height="40">
+            <img class="img-square" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC" alt="Square test icon" width="48" height="48">
+          </p>
+        </div>
+
+        <div class="test-card">
+          <h3>Ordered List (ol): start, reversed — Exaggerated Countdown</h3>
+          <ol start="10" reversed class="reversed-list">
+            <li>Countdown item 10</li>
+            <li>Countdown item 9</li>
+            <li>Countdown item 8</li>
+          </ol>
+        </div>
+
+        <div class="test-card">
+          <h3>Quotes: blockquote &amp; q cite, abbr title</h3>
+          <blockquote cite="https://example.com/standards/quote">
+            <p>A blockquote carrying a cite attribute indicating source URL.</p>
+          </blockquote>
+          <p>Inline quote with cite: <q cite="https://example.com/source">Quoted words from document</q>.</p>
+          <p>Abbreviation: <abbr title="HyperText Markup Language">HTML</abbr> with full title attribute.</p>
+        </div>
+
+        <div class="test-card">
+          <h3>Code &amp; Time &amp; Edits: data-lang, datetime, cite</h3>
+          <p>Code with language: <code data-lang="rust">fn main() { println!("WebVeld"); }</code></p>
+          <p>Publication time: <time datetime="2026-09-08T20:00:00Z">September 8, 2026 at 20:00 UTC</time></p>
+          <p>
+            <del datetime="2026-09-01" cite="https://example.com/errata">Old deprecated syntax</del>
+            <ins datetime="2026-09-08" cite="https://example.com/errata">New approved syntax</ins>
+          </p>
+        </div>
+
+        <div class="test-card">
+          <h3>Details: open</h3>
+          <details open>
+            <summary>Open Disclosure Item (open attribute present)</summary>
+            <p>This disclosure body is immediately open upon load because the open attribute is present.</p>
+          </details>
+        </div>
+
+        <div class="test-card">
+          <h3>Table: colgroup/col span, th scope, td/th colspan/rowspan/headers/align</h3>
+          <table class="attr-table">
+            <caption>Table Attributes Conformance Demonstration</caption>
+            <colgroup span="2"></colgroup>
+            <colgroup>
+              <col span="1">
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col" id="col-metric" class="ta-left">Metric (scope="col", text-align: left)</th>
+                <th scope="col" id="col-2025" colspan="2" class="ta-center">2025-2026 Combined (colspan="2", text-align: center)</th>
+              </tr>
+              <tr>
+                <th scope="col" id="col-sub" headers="col-2025" class="ta-right">Sub-header (headers="col-2025", text-align: right)</th>
+                <th scope="col" id="col-val" colspan="2">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" id="row-speed" rowspan="2">Performance (rowspan="2")</th>
+                <td headers="col-2025 row-speed" rowspan="2" class="ta-left">Left aligned (text-align: left, rowspan="2")</td>
+                <td headers="col-2025 row-speed" class="ta-right">Right aligned (text-align: right)</td>
+              </tr>
+              <tr>
+                <td headers="col-2025 row-speed" class="ta-center">Center aligned (text-align: center)</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="rowgroup">Summary (scope="rowgroup")</th>
+                <td colspan="2" headers="col-metric" class="ta-center">All metrics verified</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="test-card">
+          <h3>Forms and Every Input Type (§5.2)</h3>
+          <form action="https://example.com/submit-attributes" method="post">
+            <fieldset>
+              <legend>Post Form: Credential &amp; Text Controls</legend>
+
+              <div class="form-row">
+                <label for="inp-text">1. text (maxlength, pattern):</label>
+                <input type="text" id="inp-text" name="inp_text" value="Alpha" maxlength="15" pattern="[A-Za-z]+">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-pwd">2. password (masked, autocomplete):</label>
+                <input type="password" id="inp-pwd" name="inp_pwd" value="Secret123" autocomplete="current-password">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-user">username (autocomplete):</label>
+                <input type="text" id="inp-user" name="inp_user" value="webuser" autocomplete="username">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-new-pwd">new password (autocomplete):</label>
+                <input type="password" id="inp-new-pwd" name="inp_new_pwd" autocomplete="new-password">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-auto-off">autocomplete="off":</label>
+                <input type="text" id="inp-auto-off" name="inp_auto_off" autocomplete="off">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-email">3. email (placeholder, required):</label>
+                <input type="email" id="inp-email" name="inp_email" placeholder="user@example.com" required>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-url">4. url (readonly):</label>
+                <input type="url" id="inp-url" name="inp_url" value="https://example.com" readonly>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-tel">5. tel (disabled):</label>
+                <input type="tel" id="inp-tel" name="inp_tel" value="+15550199" disabled>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-number">6. number (min, max, step):</label>
+                <input type="number" id="inp-number" name="inp_number" value="25" min="10" max="100" step="5">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-date">7. date (min, max):</label>
+                <input type="date" id="inp-date" name="inp_date" value="2026-09-08" min="2026-01-01" max="2026-12-31">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-chk">8. checkbox (checked):</label>
+                <input type="checkbox" id="inp-chk" name="inp_chk" value="opt_chk" checked>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-rad1">9. radio A (checked):</label>
+                <input type="radio" id="inp-rad1" name="inp_rad" value="A" checked>
+                <label for="inp-rad2">radio B:</label>
+                <input type="radio" id="inp-rad2" name="inp_rad" value="B">
+              </div>
+
+              <div class="form-row">
+                <span>12. hidden (below) &mdash; exempt from labeling per spec &sect;9:</span>
+                <input type="hidden" id="inp-hidden" name="inp_hidden" value="secret_token">
+                <span>[Hidden input present in DOM with value="secret_token"]</span>
+              </div>
+
+              <div class="form-row">
+                <label for="inp-sub">10. submit button:</label>
+                <input type="submit" id="inp-sub" name="inp_sub" value="Submit Input">
+              </div>
+
+              <div class="form-row">
+                <label for="inp-rst">11. reset button:</label>
+                <input type="reset" id="inp-rst" name="inp_rst" value="Reset Input">
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Textarea &amp; Select &amp; Button Controls</legend>
+
+              <div class="form-row">
+                <label for="ctrl-textarea">Textarea (rows, cols, placeholder, maxlength):</label><br>
+                <textarea id="ctrl-textarea" name="ctrl_textarea" rows="4" cols="40" placeholder="Type comments here..." maxlength="200" required>Pre-filled text inside textarea.</textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="ctrl-textarea-ro">Readonly Textarea:</label><br>
+                <textarea id="ctrl-textarea-ro" name="ctrl_textarea_ro" rows="2" cols="40" readonly>Readonly textarea content.</textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="ctrl-textarea-dis">Disabled Textarea:</label><br>
+                <textarea id="ctrl-textarea-dis" name="ctrl_textarea_dis" rows="2" cols="40" disabled>Disabled textarea content.</textarea>
+              </div>
+
+              <div class="form-row">
+                <label for="ctrl-select-multi">Select (multiple, size="3", disabled optgroup/option):</label><br>
+                <select id="ctrl-select-multi" name="ctrl_select_multi" multiple size="3" required>
+                  <optgroup label="Active Fruits">
+                    <option value="apple" selected>Apple (selected)</option>
+                    <option value="banana">Banana</option>
+                  </optgroup>
+                  <optgroup label="Unavailable Items" disabled>
+                    <option value="mango" disabled>Mango (disabled)</option>
+                    <option value="papaya">Papaya</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label for="ctrl-select-dis">Disabled Select:</label><br>
+                <select id="ctrl-select-dis" name="ctrl_select_dis" disabled>
+                  <option value="none">Disabled select option</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <button type="submit" name="btn_submit" value="sub1">Button type="submit"</button>
+                <button type="reset" name="btn_reset" value="res1">Button type="reset"</button>
+                <button type="button" name="btn_button" value="btn1">Button type="button"</button>
+                <button type="button" name="btn_dis" value="dis1" disabled>Button disabled</button>
+              </div>
+            </fieldset>
+          </form>
+
+          <form action="https://example.com/get-form" method="get">
+            <fieldset>
+              <legend>Get Form: Method="get" verification</legend>
+              <p>
+                <label for="inp-get-q">Query term:</label>
+                <input type="text" id="inp-get-q" name="q" value="webveld">
+                <button type="submit">Submit GET Query</button>
+              </p>
+            </fieldset>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 5 Attributes</p>
+    </footer>
+  </body>
+</html>

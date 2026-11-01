@@ -1,0 +1,3 @@
+/* Custom properties are forbidden outright by section 6.7. */
+:root { --accent: #0969da; }
+a { color: var(--accent); }

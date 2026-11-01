@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Grid Subset Bound</title>
+    <style>
+      /* expect: repeat() with auto-fill or auto-fit is forbidden */
+      .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}
+    </style>
+  </head>
+  <body>
+    <h1>Outside the bounded grid subset</h1>
+    <p>Spec 6.2 admits grid only as a bounded subset.</p>
+  </body>
+</html>

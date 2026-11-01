@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Link Bad Scheme</title>
+  </head>
+  <body>
+    <!-- expect: URL scheme `javascript:` is script execution in a URL -->
+    <p><a href="javascript:alert(1)">Script URL</a></p>
+  </body>
+</html>

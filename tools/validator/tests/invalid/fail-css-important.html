@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>!important Forbidden</title>
+    <style>
+      /* expect: !important is forbidden in author style sheets (2.3.4, 6.1) */
+      p {
+        color: red !important;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

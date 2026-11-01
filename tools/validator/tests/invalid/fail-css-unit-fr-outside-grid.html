@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Unit FR Outside Grid</title>
+    <style>
+      /* expect: unit `fr` is permitted only in grid track lists (6.2, 6.4) */
+      p {
+        width: 5fr;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

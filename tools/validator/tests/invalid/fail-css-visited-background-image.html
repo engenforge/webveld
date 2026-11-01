@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Visited Background Image Forbidden</title>
+    <style>
+      /* expect: background-image in :visited is forbidden (6.3) */
+      a:visited {
+        background-image: url("/images/visited.png");
+      }
+    </style>
+  </head>
+  <body>
+    <p><a href="/page">Link</a></p>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Unit Deg</title>
+    <style>
+      /* expect: unit `deg` is not permitted (6.4) */
+      .card {
+        margin: 45deg;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="card">Test</p>
+  </body>
+</html>

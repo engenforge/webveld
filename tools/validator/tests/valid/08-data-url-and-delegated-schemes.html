@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta property="og:image" content="https://social.example.com/preview.png">
+    <title>Data URLs, Delegated Schemes, and Social Metadata</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      a:visited {
+        color: #6a1b9a;
+        background-color: #f3e5f5;
+        border-color: #4a148c;
+        outline-color: #7b1fa2;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Valid Schemes and Inline Assets</h1>
+    </header>
+    <main>
+      <p>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="1x1 Red PNG">
+      </p>
+      <p>
+        <a href="magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335de7ece74fedf">BitTorrent Link</a>
+        <a href="ssh://git@git.example.com/repo.git">SSH Link</a>
+        <a href="tel:+15551234567">Call Support</a>
+        <a href="gopher://example.org/">Gopher Hole</a>
+        <a href="gemini://example.org/">Gemini Capsule</a>
+      </p>
+    </main>
+  </body>
+</html>

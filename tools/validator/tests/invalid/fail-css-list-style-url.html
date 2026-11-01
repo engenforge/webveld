@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden URL in List-Style</title>
+    <style>
+      /* expect: url() in list-style is forbidden (6.2) */
+      ul {
+        list-style: square url("bullet.png");
+      }
+    </style>
+  </head>
+  <body>
+    <ul><li>Item</li></ul>
+  </body>
+</html>

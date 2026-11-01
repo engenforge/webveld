@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Media Query URL</title>
+    <style>
+      @media (min-width: 600px) {
+        /* expect: url() inside a media-query block is forbidden (6.6) */
+        body { background-image: url("bg-wide.png"); }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

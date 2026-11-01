@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Pattern Lookaround Forbidden</title>
+  </head>
+  <body>
+    <form action="/submit" method="post">
+      <label for="code">Code:</label>
+      <!-- expect: pattern attribute must not use lookaround or backreferences (2.3.9, 5.2) -->
+      <input type="text" id="code" name="code" pattern="(?=.*[0-9])[a-z0-9]+">
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

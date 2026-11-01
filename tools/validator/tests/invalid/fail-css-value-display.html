@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Display Value</title>
+    <style>
+      /* expect: value `table` is not permitted for `display` (6.2) */
+      .container {
+        display: table;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container"><p>Test</p></div>
+  </body>
+</html>

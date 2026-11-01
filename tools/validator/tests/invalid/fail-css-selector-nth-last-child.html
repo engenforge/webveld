@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Selector Nth-Last-Child</title>
+    <style>
+      /* expect: selector :nth-last-child is forbidden (6.3) */
+      p:nth-last-child(1) {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+echo "Running WebVeld repository validation..."
+sh tools/validator/check-repo.sh

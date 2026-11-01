@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Media Type Forbidden</title>
+    <style>
+      /* expect: media types other than print are forbidden in @media (6.6) */
+      @media screen and (min-width: 600px) {
+        body { color: blue; }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

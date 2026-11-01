@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-link-data-url</title>
+    <!-- expect: `data:` in <link href> is permitted only for a PNG icon (7.1) -->
+    <link rel="stylesheet" href="data:text/css,p{color:red}">
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

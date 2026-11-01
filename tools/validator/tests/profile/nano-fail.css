@@ -1,0 +1,11 @@
+@media (min-width: 40em) { body { max-width: 60rem; } }
+@media (prefers-color-scheme: dark) and (min-width: 40em) { body { color: #fff; } }
+@font-face { font-family: "X"; src: url(x.woff2); }
+a:hover { color: red; }
+a:focus:hover { color: blue; }
+h1 + p { margin-top: 0; }
+a[href^="http"] { color: green; }
+p::after { content: " end"; }
+.card { display: flex; gap: 1rem; overflow: hidden; background-image: url(x.png); }
+.panel { display: block; }
+body { color: blue !important; }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Text-browser case: tabindex and style leakage</title>
+  <style>
+    p { color: red; }
+  </style>
+</head>
+<body>
+  <p>STYLE-LEAK-CHECK</p>
+  <a href="/one">One</a>
+  <div tabindex="0">FOCUSABLE-DIV-tabindex-0</div>
+  <a href="/two">Two</a>
+  <div tabindex="-1">UNFOCUSABLE-DIV</div>
+  <a href="/three">Three</a>
+</body>
+</html>

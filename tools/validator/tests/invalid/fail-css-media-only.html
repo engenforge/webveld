@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>fail-css-media-only</title>
+    <!-- expect: the `not` and `only` media query modifiers are forbidden (6.6) -->
+    <style>@media only print { p { color: red; } }</style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

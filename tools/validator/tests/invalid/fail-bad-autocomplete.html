@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bad Autocomplete</title>
+  </head>
+  <body>
+    <form action="/submit" method="post">
+      <label for="addr">Address</label>
+      <!-- expect: autocomplete="street-address" is not one of username, current-password, new-password, off (5.2) -->
+      <input type="text" id="addr" name="address" autocomplete="street-address">
+    </form>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Probe: position static (NOT WebVeld-conforming)</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .box { width: 150px; height: 50px; border: 2px solid #222; margin: 10px 0; }
+    .normal-box { background: #bdf; }
+    .static-box { position: static; top: 100px; left: 100px; background: #fdb; }
+  </style>
+</head>
+<body>
+  <h1>Probe: position: static</h1>
+  <p>This document is deliberately NOT WebVeld-conforming. Section 6.2 does not
+     list <code>position</code>, <code>top</code> or <code>left</code>, so no conforming
+     document can contain them. It exists to characterize Blitz's handling of an
+     upstream defect, not to test anything WebVeld requires.</p>
+  <div class="box normal-box">Default Flow</div>
+  <div class="box static-box">Static Box (top/left ignored)</div>
+  <div class="box normal-box">Next in Flow</div>
+</body>
+</html>

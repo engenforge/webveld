@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Invalid Nth-Child Argument</title>
+    <style>
+      /* expect: invalid :nth-child argument `foo` (6.3) */
+      li:nth-child(foo) {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <ul><li>Item</li></ul>
+  </body>
+</html>

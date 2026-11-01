@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Section 4.3: Conformance Suite — Allowed Elements</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC">
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #1a202c;
+        background-color: #f7fafc;
+      }
+      header, footer, nav, article, section, aside {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        border: 2px solid #cbd5e0;
+        background-color: #ffffff;
+      }
+      header {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+      }
+      footer {
+        border-color: #4a5568;
+        background-color: #edf2f7;
+      }
+      nav {
+        border-color: #319795;
+        background-color: #e6fffa;
+      }
+      article {
+        border-color: #805ad5;
+        background-color: #faf5ff;
+      }
+      aside {
+        border-color: #dd6b20;
+        background-color: #fffaf0;
+      }
+      section {
+        border-color: #38a169;
+        background-color: #f0fff4;
+      }
+      h1 { font-size: 28px; margin: 0 0 12px 0; color: #1a365d; }
+      h2 { font-size: 22px; margin: 0 0 10px 0; color: #22543d; }
+      h3 { font-size: 18px; margin: 0 0 8px 0; color: #44337a; }
+      h4 { font-size: 16px; margin: 0 0 6px 0; color: #742a2a; }
+      h5 { font-size: 14px; margin: 0 0 4px 0; color: #744210; }
+      h6 { font-size: 12px; margin: 0 0 4px 0; color: #4a5568; }
+      p { margin: 8px 0; }
+      hr {
+        border: 0;
+        border-top: 4px solid #cbd5e0;
+        margin: 20px 0;
+      }
+      blockquote {
+        margin: 12px 0;
+        padding: 10px 16px;
+        border-left: 6px solid #4299e1;
+        background-color: #edf2f7;
+      }
+      pre {
+        background-color: #2d3748;
+        color: #f7fafc;
+        padding: 12px;
+        overflow-x: auto;
+        font-family: monospace;
+      }
+      figure {
+        margin: 12px 0;
+        padding: 12px;
+        border: 2px dashed #4a5568;
+        background-color: #ffffff;
+      }
+      figcaption {
+        font-style: italic;
+        color: #718096;
+        margin-top: 8px;
+      }
+      ul, ol {
+        margin: 10px 0 10px 24px;
+        padding: 0;
+      }
+      dl {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #edf2f7;
+        border: 1px solid #cbd5e0;
+      }
+      dt {
+        font-weight: bold;
+        color: #2b6cb0;
+        margin-top: 6px;
+      }
+      dd {
+        margin-left: 20px;
+        color: #4a5568;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 14px 0;
+      }
+      caption {
+        font-weight: bold;
+        padding: 8px;
+        background-color: #edf2f7;
+        border: 1px solid #cbd5e0;
+      }
+      th, td {
+        border: 2px solid #cbd5e0;
+        padding: 10px;
+        text-align: left;
+      }
+      thead th {
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+      }
+      tfoot td {
+        background-color: #f7fafc;
+        font-weight: bold;
+      }
+      fieldset {
+        border: 2px solid #3182ce;
+        padding: 16px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+      legend {
+        font-weight: bold;
+        color: #2b6cb0;
+        padding: 0 8px;
+      }
+      details {
+        border: 2px solid #4a5568;
+        padding: 12px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+      summary {
+        font-weight: bold;
+        cursor: pointer;
+        color: #2b6cb0;
+      }
+      .highlight-kbd {
+        border: 1px solid #a0aec0;
+        padding: 2px 6px;
+        background-color: #edf2f7;
+      }
+      .test-img {
+        border: 3px solid #e53e3e;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Section 4.3 Element Coverage Note:
+      noscript is permitted exclusively in extended documents (spec §2.3.7, §2.5, §4.3)
+      and MUST NOT appear in conforming documents. It is validated and tested in
+      tools/validator/tests/classify/extended-appendix-a3.html.
+      The remaining 80 allowed elements of Section 4.3 are exercised below.
+    -->
+    <header>
+      <h1>Section 4.3: Conformance Suite — Allowed Elements</h1>
+      <p>This document exercises every element allowed by Section 4.3 in conforming WebVeld documents.</p>
+      <nav>
+        <ul>
+          <li><a href="#sec-sectioning">Sectioning Elements</a></li>
+          <li><a href="#sec-grouping">Grouping Elements</a></li>
+          <li><a href="#sec-text">Text-Level Elements</a></li>
+          <li><a href="#sec-tables">Table Elements</a></li>
+          <li><a href="#sec-forms">Form Elements</a></li>
+          <li><a href="#sec-interactive">Interactive Elements</a></li>
+          <li><a href="#sec-embedded">Embedded Elements</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="sec-sectioning">
+        <h2>1. Sectioning &amp; Headings</h2>
+        <article>
+          <h3>Article Container (h3)</h3>
+          <p>This text is enclosed in an <code>&lt;article&gt;</code> element.</p>
+          <h4>Sub-heading level 4 (h4)</h4>
+          <p>Content under h4 heading.</p>
+          <h5>Sub-heading level 5 (h5)</h5>
+          <p>Content under h5 heading.</p>
+          <h6>Sub-heading level 6 (h6)</h6>
+          <p>Content under h6 heading.</p>
+        </article>
+        <aside>
+          <h3>Aside Element (h3)</h3>
+          <p>This content is enclosed in an <code>&lt;aside&gt;</code> element representing tangentially related notes.</p>
+        </aside>
+      </section>
+
+      <section id="sec-grouping">
+        <h2>2. Grouping Elements</h2>
+        <p>Paragraph element (<code>&lt;p&gt;</code>) containing standard prose.</p>
+        <hr>
+        <blockquote>
+          <p>Blockquote element (<code>&lt;blockquote&gt;</code>) representing quoted section.</p>
+        </blockquote>
+        <pre>Preformatted element (&lt;pre&gt;):
+  line 2: preserved leading spaces
+    line 3: preserved indentation</pre>
+        <figure>
+          <div>Generic division (<code>&lt;div&gt;</code>) inside a figure.</div>
+          <figcaption>Figcaption element (<code>&lt;figcaption&gt;</code>) labeling the figure.</figcaption>
+        </figure>
+        <ul>
+          <li>Unordered list item 1 (<code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>)</li>
+          <li>Unordered list item 2</li>
+        </ul>
+        <ol>
+          <li>Ordered list item 1 (<code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code>)</li>
+          <li>Ordered list item 2</li>
+        </ol>
+        <dl>
+          <dt>Description Term (<code>&lt;dt&gt;</code>)</dt>
+          <dd>Description Details (<code>&lt;dd&gt;</code>) within a description list (<code>&lt;dl&gt;</code>).</dd>
+        </dl>
+      </section>
+
+      <section id="sec-text">
+        <h2>3. Text-Level Elements</h2>
+        <p>
+          Hyperlink: <a href="#sec-text">anchor link (<code>&lt;a&gt;</code>)</a>.<br>
+          Formatting: <strong>strong importance</strong>, <em>stressed emphasis</em>,
+          <i>alternate voice (i)</i>, <b>stylistic offset (b)</b>, <u>unarticulated annotation (u)</u>.<br>
+          Code &amp; Input: <code>code snippet</code>, <kbd class="highlight-kbd">kbd user input</kbd>,
+          <samp>sample output</samp>, <var>variable x</var>.<br>
+          Semantics: <abbr title="HyperText Markup Language">HTML (abbr)</abbr>,
+          <cite>Web Standards Manual (cite)</cite>,
+          <q>inline quotation (q)</q>, <mark>marked highlight</mark>,
+          <small>small side-note</small>, <dfn>dfn defining instance</dfn>,
+          <time datetime="2026-09-08">September 8, 2026 (time)</time>.<br>
+          Vertical offset: Baseline text with <sub>subscript text</sub> and <sup>superscript text</sup>.<br>
+          Edits: <del>deleted text</del> replaced with <ins>inserted text</ins>.<br>
+          Flow control: Break opportunity here: super<wbr>cali<wbr>fragilistic,
+          and an inline container: <span>span element</span>.
+        </p>
+      </section>
+
+      <section id="sec-tables">
+        <h2>4. Table Elements</h2>
+        <table>
+          <caption>Table Caption Element (<code>&lt;caption&gt;</code>)</caption>
+          <colgroup>
+            <col>
+            <col>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Table Header 1 (<code>&lt;thead&gt;</code>, <code>&lt;th&gt;</code>)</th>
+              <th>Table Header 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Body Cell 1 (<code>&lt;tbody&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code>)</td>
+              <td>Body Cell 2</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Footer Cell 1 (<code>&lt;tfoot&gt;</code>)</td>
+              <td>Footer Cell 2</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section id="sec-forms">
+        <h2>5. Form Elements</h2>
+        <form action="https://example.com/test-elements" method="post">
+          <fieldset>
+            <legend>Fieldset Legend (<code>&lt;fieldset&gt;</code>, <code>&lt;legend&gt;</code>)</legend>
+            <p>
+              <label for="el-input-text">Text input (<code>&lt;label&gt;</code>, <code>&lt;input&gt;</code>):</label>
+              <input type="text" id="el-input-text" name="el-input-text" value="Sample text">
+            </p>
+            <p>
+              <label for="el-textarea">Textarea (<code>&lt;textarea&gt;</code>):</label>
+              <textarea id="el-textarea" name="el-textarea" rows="3" cols="30">Textarea content</textarea>
+            </p>
+            <p>
+              <label for="el-select">Select dropdown (<code>&lt;select&gt;</code>):</label>
+              <select id="el-select" name="el-select">
+                <optgroup label="Optgroup 1 (optgroup)">
+                  <option value="opt1">Option 1 (option)</option>
+                  <option value="opt2">Option 2</option>
+                </optgroup>
+              </select>
+            </p>
+            <p>
+              <button type="submit">Button Submit (<code>&lt;button&gt;</code>)</button>
+            </p>
+          </fieldset>
+        </form>
+      </section>
+
+      <section id="sec-interactive">
+        <h2>6. Interactive Elements</h2>
+        <details>
+          <summary>Details Closed (<code>&lt;details&gt;</code>, <code>&lt;summary&gt;</code>)</summary>
+          <p>This disclosure content is initially hidden when the element is closed.</p>
+        </details>
+        <details open>
+          <summary>Details Open (<code>&lt;details open&gt;</code>)</summary>
+          <p>This disclosure content is initially visible because the open attribute is set.</p>
+        </details>
+      </section>
+
+      <section id="sec-embedded">
+        <h2>7. Embedded Elements</h2>
+        <figure>
+          <img class="test-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC" alt="Conformance test PNG image" width="64" height="64">
+          <figcaption>Image element (<code>&lt;img&gt;</code>) rendered with explicit width and height.</figcaption>
+        </figure>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 4.3 Allowed Elements</p>
+    </footer>
+  </body>
+</html>

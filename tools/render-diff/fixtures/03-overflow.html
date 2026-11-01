@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gap Test: overflow auto</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .container { display: flex; gap: 20px; }
+    .box { width: 120px; height: 80px; border: 2px solid #333; }
+    .auto { overflow: auto; background: #eef; }
+    .scroll { overflow: scroll; background: #efe; }
+    .hidden { overflow: hidden; background: #fee; }
+    .content { width: 200px; height: 150px; background-color: #ddd; }
+  </style>
+</head>
+<body>
+  <h1>overflow Test</h1>
+  <div class="container">
+    <div><h2>overflow: auto</h2><div class="box auto"><div class="content">Big content in auto box</div></div></div>
+    <div><h2>overflow: scroll</h2><div class="box scroll"><div class="content">Big content in scroll box</div></div></div>
+    <div><h2>overflow: hidden</h2><div class="box hidden"><div class="content">Big content in hidden box</div></div></div>
+  </div>
+</body>
+</html>

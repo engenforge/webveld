@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Border-Radius Slash Syntax</title>
+    <style>
+      /* expect: slash syntax in border-radius is forbidden (6.2) */
+      .box {
+        border-radius: 10px / 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="box">Test</p>
+  </body>
+</html>

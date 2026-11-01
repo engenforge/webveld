@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden CSS Selector Nth-of-Type</title>
+    <style>
+      /* expect: selector :nth-of-type is forbidden (6.3) */
+      p:nth-of-type(2) {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

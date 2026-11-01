@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Form Action Scheme</title>
+  </head>
+  <body>
+    <!-- expect: form action scheme `mailto:` is not permitted -->
+    <form action="mailto:owner@example.com" method="post">
+      <label for="msg">Message</label>
+      <textarea id="msg" name="msg" rows="4"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </body>
+</html>

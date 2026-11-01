@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="webveld-view">
+  <head>
+    <meta charset="utf-8" />
+    <title>Store</title>
+    <style>
+      body { font-family: sans-serif; max-width: 800px; margin: 0 auto; }
+      .shared { border-bottom: 1px solid #ccc; padding-bottom: 1rem; }
+      .modern-app { display: none; }
+      .modern-view .modern-app { display: block; }
+      .modern-view .webveld-only { display: none; }
+    </style>
+    <!-- Modern browsers execute this; WebVeld browsers ignore it -->
+    <script>
+      document.documentElement.className = 'modern-view';
+    </script>
+  </head>
+  <body>
+    <header class="shared">
+      <h1>Our Products</h1>
+      <p>High-quality widgets for your daily needs.</p>
+    </header>
+
+    <main class="modern-app">
+      <h2>Interactive Storefront</h2>
+      <div id="cart-root"></div>
+      <script src="storefront.js"></script>
+    </main>
+
+    <noscript>
+      <div class="webveld-only">
+        <h2>Catalog</h2>
+        <table>
+          <caption>Products and how to order</caption>
+          <tr><th scope="col">Item</th><th scope="col">Price</th><th scope="col">Order</th></tr>
+          <tr><td>Widget A</td><td>$10.00</td><td>Call 555-0199</td></tr>
+        </table>
+        <p>Or download our <a href="order-form.pdf">order form</a>.</p>
+      </div>
+    </noscript>
+  </body>
+</html>

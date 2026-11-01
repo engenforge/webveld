@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Section 6.2: Conformance Suite — Allowed Properties &amp; Values</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC">
+    <style>
+      /* --- Base Layout --- */
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #1a202c;
+        background-color: #f7fafc;
+      }
+      header, footer, main, section {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+      }
+      header {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+      }
+      h1 { font-size: 26px; color: #2b6cb0; margin: 0 0 10px 0; }
+      h2 { font-size: 20px; color: #2c5282; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      h3 { font-size: 16px; color: #4a5568; margin: 12px 0 6px 0; }
+      p { margin: 8px 0; }
+      .card {
+        border: 2px solid #cbd5e0;
+        padding: 12px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+
+      /* --- 1. Box Model (33 properties) --- */
+      .box-margin-shorthand {
+        margin: 25px;
+        background-color: #e2e8f0;
+        border: 1px solid #718096;
+      }
+      .box-margin-sides {
+        margin-top: 30px;
+        margin-right: 40px;
+        margin-bottom: 20px;
+        margin-left: 50px;
+        background-color: #feebc8;
+        border: 1px solid #dd6b20;
+      }
+      .box-padding-shorthand {
+        padding: 24px;
+        background-color: #c6f6d5;
+        border: 1px solid #38a169;
+      }
+      .box-padding-sides {
+        padding-top: 15px;
+        padding-right: 35px;
+        padding-bottom: 25px;
+        padding-left: 45px;
+        background-color: #fed7d7;
+        border: 1px solid #e53e3e;
+      }
+      .box-dims {
+        width: 260px;
+        min-width: 200px;
+        max-width: 300px;
+        height: 100px;
+        min-height: 80px;
+        max-height: 120px;
+        background-color: #bee3f8;
+        border: 2px solid #3182ce;
+      }
+      .box-border-shorthand {
+        border: 6px solid #805ad5;
+      }
+      .box-border-sides {
+        border-top: 8px solid #e53e3e;
+        border-right: 14px solid #38a169;
+        border-bottom: 6px solid #3182ce;
+        border-left: 18px solid #d69e2e;
+        padding: 10px;
+      }
+      .box-border-styles {
+        border-width: 6px;
+        border-color: #4a5568;
+        padding: 8px;
+        margin: 6px 0;
+      }
+      .bs-solid { border-style: solid; }
+      .bs-dashed { border-style: dashed; }
+      .bs-dotted { border-style: dotted; }
+      .bs-double { border-style: double; }
+      .bs-groove { border-style: groove; }
+      .bs-ridge { border-style: ridge; }
+      .bs-inset { border-style: inset; }
+      .bs-outset { border-style: outset; }
+      .bs-none { border-style: none; }
+
+      .box-radius-1 { border-radius: 20px; border: 3px solid #2b6cb0; padding: 8px; }
+      .box-radius-2 { border-radius: 10px 35px; border: 3px solid #2b6cb0; padding: 8px; }
+      .box-radius-3 { border-radius: 5px 20px 40px; border: 3px solid #2b6cb0; padding: 8px; }
+      .box-radius-4 { border-radius: 4px 16px 36px 60px; border: 3px solid #2b6cb0; padding: 8px; }
+
+      .box-sizing-content {
+        box-sizing: content-box;
+        width: 140px;
+        padding: 20px;
+        border: 8px solid #3182ce;
+        background-color: #ebf8ff;
+      }
+      .box-sizing-border {
+        box-sizing: border-box;
+        width: 140px;
+        padding: 20px;
+        border: 8px solid #3182ce;
+        background-color: #feebc8;
+      }
+
+      .box-outline-shorthand {
+        border: 3px solid #4a5568;
+        outline: 6px dashed #dd6b20;
+        margin: 15px;
+        padding: 8px;
+      }
+      .box-outline-longhands {
+        border: 3px solid #4a5568;
+        outline-width: 6px;
+        outline-style: dotted;
+        outline-color: #805ad5;
+        outline-offset: 12px;
+        margin: 25px;
+        padding: 8px;
+      }
+
+      /* --- 2. Display and Layout (24 properties) --- */
+      .disp-block { display: block; background-color: #fed7d7; padding: 6px; margin: 4px 0; }
+      .disp-inline { display: inline; background-color: #feebc8; padding: 6px; }
+      .disp-inline-block { display: inline-block; width: 140px; height: 50px; background-color: #c6f6d5; padding: 6px; }
+      .disp-none { display: none; }
+
+      .flex-container {
+        display: flex;
+        background-color: #edf2f7;
+        border: 2px solid #a0aec0;
+        padding: 10px;
+        margin: 8px 0;
+      }
+      .fdir-row { flex-direction: row; }
+      .fdir-col { flex-direction: column; }
+      .fdir-row-rev { flex-direction: row-reverse; }
+      .fdir-col-rev { flex-direction: column-reverse; }
+
+      .fwrap-nowrap { flex-wrap: nowrap; width: 220px; }
+      .fwrap-wrap { flex-wrap: wrap; width: 220px; }
+      .fwrap-wrap-rev { flex-wrap: wrap-reverse; width: 220px; }
+
+      .fjc-start { justify-content: flex-start; }
+      .fjc-end { justify-content: flex-end; }
+      .fjc-center { justify-content: center; }
+      .fjc-between { justify-content: space-between; }
+      .fjc-around { justify-content: space-around; }
+
+      .fai-start { align-items: flex-start; height: 90px; }
+      .fai-end { align-items: flex-end; height: 90px; }
+      .fai-center { align-items: center; height: 90px; }
+      .fai-stretch { align-items: stretch; height: 90px; }
+
+      .fac-start { align-content: flex-start; flex-wrap: wrap; height: 140px; }
+      .fac-end { align-content: flex-end; flex-wrap: wrap; height: 140px; }
+      .fac-center { align-content: center; flex-wrap: wrap; height: 140px; }
+      .fac-between { align-content: space-between; flex-wrap: wrap; height: 140px; }
+      .fac-around { align-content: space-around; flex-wrap: wrap; height: 140px; }
+      .fac-stretch { align-content: stretch; flex-wrap: wrap; height: 140px; }
+
+      .flex-item {
+        background-color: #3182ce;
+        color: #ffffff;
+        padding: 8px 12px;
+        margin: 4px;
+        font-weight: bold;
+      }
+      .fitem-grow-1 { flex-grow: 1; }
+      .fitem-grow-3 { flex-grow: 3; }
+      .fitem-shrink-0 { flex-shrink: 0; width: 140px; }
+      .fitem-shrink-2 { flex-shrink: 2; width: 140px; }
+      .fitem-basis { flex-basis: 150px; }
+      .fitem-shorthand { flex: 2 1 120px; }
+
+      .ord-1 { order: 1; }
+      .ord-2 { order: 2; }
+      .ord-neg { order: -1; }
+
+      .gap-all { gap: 20px; }
+      .gap-row-col { row-gap: 25px; column-gap: 35px; }
+
+      /* Grid Bounded Subset */
+      .grid-container {
+        display: grid;
+        background-color: #edf2f7;
+        border: 2px solid #718096;
+        padding: 10px;
+        margin: 8px 0;
+      }
+      .grid-tracks-basic {
+        grid-template-columns: 120px 1fr 2fr;
+        grid-template-rows: 60px 80px;
+      }
+      .grid-tracks-intrinsic {
+        grid-template-columns: min-content max-content auto;
+        grid-template-rows: repeat(2, minmax(40px, auto));
+      }
+      .grid-tracks-repeat {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 50px 70px;
+      }
+      .grid-item {
+        background-color: #805ad5;
+        color: #ffffff;
+        padding: 8px;
+        border: 1px solid #44337a;
+        font-weight: bold;
+      }
+      .grid-placed-col { grid-column: 1 / 3; }
+      .grid-placed-row { grid-row: 1 / 3; }
+      .grid-placed-start-end {
+        grid-column-start: 2;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 3;
+      }
+
+      /* --- 3. Typography (12 properties) --- */
+      .font-serif { font-family: serif; }
+      .font-sans { font-family: sans-serif; }
+      .font-mono { font-family: monospace; }
+
+      .fs-large { font-size: 24px; }
+      .fs-small { font-size: 11px; }
+
+      .fw-100 { font-weight: 100; }
+      .fw-300 { font-weight: 300; }
+      .fw-400 { font-weight: 400; }
+      .fw-600 { font-weight: 600; }
+      .fw-700 { font-weight: 700; }
+      .fw-900 { font-weight: 900; }
+      .fw-normal { font-weight: normal; }
+      .fw-bold { font-weight: bold; }
+
+      .fstyle-normal { font-style: normal; }
+      .fstyle-italic { font-style: italic; }
+
+      .lh-tight { line-height: 1.1; background-color: #edf2f7; }
+      .lh-loose { line-height: 2.8; background-color: #feebc8; }
+
+      .ta-left { text-align: left; }
+      .ta-right { text-align: right; }
+      .ta-center { text-align: center; }
+      .ta-justify { text-align: justify; }
+      .ta-start { text-align: start; }
+      .ta-end { text-align: end; }
+
+      .td-none { text-decoration: none; }
+      .td-under { text-decoration: underline; }
+      .td-strike { text-decoration: line-through; }
+
+      .tt-none { text-transform: none; }
+      .tt-upper { text-transform: uppercase; }
+      .tt-lower { text-transform: lowercase; }
+      .tt-cap { text-transform: capitalize; }
+
+      .spacing-exaggerated {
+        letter-spacing: 16px;
+        word-spacing: 40px;
+        background-color: #e6fffa;
+        padding: 8px;
+        border: 2px solid #319795;
+      }
+
+      .ws-box { width: 140px; border: 2px solid #e53e3e; margin: 6px 0; padding: 6px; background-color: #fff5f5; }
+      .ws-normal { white-space: normal; }
+      .ws-nowrap { white-space: nowrap; }
+      .ws-pre { white-space: pre; }
+      .ws-prewrap { white-space: pre-wrap; }
+      .ws-preline { white-space: pre-line; }
+
+      .break-box { width: 100px; border: 2px solid #805ad5; padding: 4px; margin: 4px 0; background-color: #faf5ff; }
+      .ow-normal { overflow-wrap: normal; }
+      .ow-break { overflow-wrap: break-word; }
+      .ow-anywhere { overflow-wrap: anywhere; }
+
+      .wb-normal { word-break: normal; }
+      .wb-all { word-break: break-all; }
+      .wb-keep { word-break: keep-all; }
+
+      /* --- 4. Color and Background (7 properties) --- */
+      .color-hex { color: #c53030; }
+      .color-rgb { color: rgb(43, 108, 176); }
+      .color-hsl { color: hsl(142, 72%, 29%); }
+      .color-curr { color: currentColor; border: 3px solid currentColor; padding: 4px; }
+
+      .bg-col { background-color: #feebc8; padding: 8px; }
+      .bg-img {
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC");
+        height: 60px;
+        border: 2px solid #4a5568;
+      }
+      .bg-rep-repeat { background-repeat: repeat; }
+      .bg-rep-x { background-repeat: repeat-x; }
+      .bg-rep-y { background-repeat: repeat-y; }
+      .bg-rep-no { background-repeat: no-repeat; }
+
+      .bg-pos-top-left { background-position: top left; }
+      .bg-pos-center { background-position: center; }
+      .bg-pos-bottom-right { background-position: bottom right; }
+
+      .bg-shorthand {
+        background: #ebf8ff url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC") no-repeat center;
+        height: 60px;
+        border: 2px solid #3182ce;
+      }
+
+      .op-10 { opacity: 1.0; }
+      .op-6 { opacity: 0.6; }
+      .op-2 { opacity: 0.2; }
+      .op-box { display: inline-block; width: 80px; height: 50px; background-color: #e53e3e; color: #fff; font-weight: bold; padding: 6px; margin: 4px; }
+
+      /* --- 5. Lists (3 properties) --- */
+      .lst-disc { list-style-type: disc; }
+      .lst-circle { list-style-type: circle; }
+      .lst-square { list-style-type: square; }
+      .lst-decimal { list-style-type: decimal; }
+      .lst-lower-alpha { list-style-type: lower-alpha; }
+      .lst-upper-alpha { list-style-type: upper-alpha; }
+      .lst-lower-roman { list-style-type: lower-roman; }
+      .lst-upper-roman { list-style-type: upper-roman; }
+      .lst-none { list-style-type: none; }
+
+      .lsp-inside { list-style-position: inside; background-color: #ebf8ff; border: 1px solid #3182ce; }
+      .lsp-outside { list-style-position: outside; background-color: #fefcbf; border: 1px solid #d69e2e; }
+
+      .list-shorthand { list-style: square inside; }
+
+      /* --- 6. Tables (4 properties) --- */
+      table.tbl-prop {
+        width: 100%;
+        margin: 12px 0;
+      }
+      table.tbl-prop th, table.tbl-prop td {
+        border: 2px solid #4a5568;
+        padding: 8px;
+      }
+      .tbl-collapse { border-collapse: collapse; }
+      .tbl-separate { border-collapse: separate; border-spacing: 16px; }
+
+      .cap-top { caption-side: top; font-weight: bold; background-color: #bee3f8; padding: 6px; }
+      .cap-bottom { caption-side: bottom; font-weight: bold; background-color: #feebc8; padding: 6px; }
+
+      .ec-show { empty-cells: show; }
+      .ec-hide { empty-cells: hide; }
+      .empty-td { border: 4px solid #e53e3e; background-color: #fed7d7; }
+
+      /* --- 7. Other (7 properties) --- */
+      .overflow-box {
+        width: 120px;
+        height: 60px;
+        border: 2px solid #2b6cb0;
+        margin: 6px 0;
+        background-color: #ebf8ff;
+      }
+      .overflow-content { width: 240px; height: 120px; background-color: #feebc8; }
+
+      .ov-visible { overflow: visible; }
+      .ov-hidden { overflow: hidden; }
+      .ov-scroll { overflow: scroll; }
+      .ov-auto { overflow: auto; }
+
+      .ovx-scroll { overflow-x: scroll; overflow-y: hidden; }
+      .ovy-scroll { overflow-y: scroll; overflow-x: hidden; }
+      .ovx-auto { overflow-x: auto; }
+      .ovy-auto { overflow-y: auto; }
+      .intrinsic-max { width: max-content; min-width: 100%; box-sizing: border-box;
+        background-color: #e2e8f0; padding: 0.5rem; font-family: monospace; }
+      .intrinsic-min { width: min-content; min-width: min-content; background-color: #fefcbf; padding: 0.5rem; }
+      .intrinsic-caps { max-width: max-content; max-height: max-content; background-color: #fed7d7; padding: 0.5rem; }
+      .intrinsic-h { height: max-content; min-height: min-content; background-color: #c6f6d5; padding: 0.5rem; }
+
+      .ovx-visible { overflow-x: visible; }
+      .ovy-visible { overflow-y: visible; }
+
+      .content-gen::before {
+        content: " [PREFIX GENERATED] ";
+        color: #2b6cb0;
+        font-weight: bold;
+      }
+      .content-gen::after {
+        content: " [SUFFIX GENERATED]";
+        color: #c53030;
+        font-weight: bold;
+      }
+      .content-none::before { content: none; }
+      .content-normal::after { content: normal; }
+
+      .cur-auto { cursor: auto; }
+      .cur-default { cursor: default; }
+      .cur-pointer { cursor: pointer; }
+      .cur-text { cursor: text; }
+      .cur-box { display: inline-block; padding: 8px; border: 1px solid #718096; background-color: #edf2f7; margin: 4px; }
+
+      .va-container {
+        line-height: 60px;
+        font-size: 24px;
+        background-color: #edf2f7;
+        border: 2px solid #a0aec0;
+        padding: 10px;
+        margin: 8px 0;
+      }
+      .va-baseline { vertical-align: baseline; color: #2b6cb0; font-weight: bold; }
+      .va-top { vertical-align: top; color: #c53030; font-weight: bold; }
+      .va-middle { vertical-align: middle; color: #38a169; font-weight: bold; }
+      .va-bottom { vertical-align: bottom; color: #d69e2e; font-weight: bold; }
+      .va-sub { vertical-align: sub; color: #805ad5; font-weight: bold; }
+      .va-super { vertical-align: super; color: #e53e3e; font-weight: bold; }
+
+      .clip-inset {
+        width: 160px;
+        height: 100px;
+        background-color: #3182ce;
+        color: #fff;
+        clip-path: inset(15px 25px 10px 15px);
+        margin: 8px 0;
+        font-weight: bold;
+        padding: 4px;
+      }
+      .clip-none {
+        width: 160px;
+        height: 100px;
+        background-color: #2f855a;
+        color: #fff;
+        clip-path: none;
+        margin: 8px 0;
+        font-weight: bold;
+        padding: 4px;
+      }
+      .clip-rect {
+        width: 160px;
+        height: 100px;
+        background-color: #dd6b20;
+        color: #fff;
+        clip-path: rect(10px 140px 80px 15px);
+        margin: 8px 0;
+        font-weight: bold;
+        padding: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Section 6.2: Allowed Properties &amp; Enumerated Values</h1>
+      <p>Exercises every property allowed in WebVeld with every enumerated value and exaggerated visual distinction.</p>
+    </header>
+
+    <main>
+      <!-- ================= 1. BOX MODEL ================= -->
+      <section id="sec-box-model">
+        <h2>1. Box Model (33 Properties)</h2>
+
+        <div class="card">
+          <h3>margin (shorthand &amp; longhands)</h3>
+          <div class="box-margin-shorthand">margin: 25px (all sides)</div>
+          <div class="box-margin-sides">margin-top: 30px, margin-right: 40px, margin-bottom: 20px, margin-left: 50px</div>
+        </div>
+
+        <div class="card">
+          <h3>padding (shorthand &amp; longhands)</h3>
+          <div class="box-padding-shorthand">padding: 24px (all sides)</div>
+          <div class="box-padding-sides">padding-top: 15px, padding-right: 35px, padding-bottom: 25px, padding-left: 45px</div>
+        </div>
+
+        <div class="card">
+          <h3>width, max-width, min-width &amp; height, max-height, min-height</h3>
+          <div class="box-dims">Dimensions container: width 260px (min 200, max 300), height 100px (min 80, max 120)</div>
+        </div>
+
+        <div class="card">
+          <h3>border (shorthand, longhands, width, color, and all styles)</h3>
+          <div class="box-border-shorthand">border: 6px solid #805ad5 shorthand</div>
+          <div class="box-border-sides">border-top, border-right, border-bottom, border-left each distinct color &amp; width</div>
+          <div class="box-border-styles bs-solid">border-style: solid</div>
+          <div class="box-border-styles bs-dashed">border-style: dashed</div>
+          <div class="box-border-styles bs-dotted">border-style: dotted</div>
+          <div class="box-border-styles bs-double">border-style: double</div>
+          <div class="box-border-styles bs-groove">border-style: groove</div>
+          <div class="box-border-styles bs-ridge">border-style: ridge</div>
+          <div class="box-border-styles bs-inset">border-style: inset</div>
+          <div class="box-border-styles bs-outset">border-style: outset</div>
+          <div class="box-border-styles bs-none">border-style: none</div>
+        </div>
+
+        <div class="card">
+          <h3>border-radius (1, 2, 3, 4 values)</h3>
+          <div class="box-radius-1">1 value: border-radius: 20px</div>
+          <div class="box-radius-2">2 values: border-radius: 10px 35px</div>
+          <div class="box-radius-3">3 values: border-radius: 5px 20px 40px</div>
+          <div class="box-radius-4">4 values: border-radius: 4px 16px 36px 60px</div>
+        </div>
+
+        <div class="card">
+          <h3>box-sizing (content-box vs border-box)</h3>
+          <p>Both have width: 140px, padding: 20px, border: 8px. content-box yields 196px total width, border-box yields 140px:</p>
+          <div class="box-sizing-content">content-box (wider total)</div>
+          <div class="box-sizing-border">border-box (140px total)</div>
+        </div>
+
+        <div class="card">
+          <h3>outline (shorthand, longhands, offset)</h3>
+          <div class="box-outline-shorthand">outline: 6px dashed #dd6b20</div>
+          <div class="box-outline-longhands">outline-width: 6px, outline-style: dotted, outline-color: #805ad5, outline-offset: 12px</div>
+        </div>
+      </section>
+
+      <!-- ================= 2. DISPLAY AND LAYOUT ================= -->
+      <section id="sec-layout">
+        <h2>2. Display &amp; Layout (24 Properties)</h2>
+
+        <div class="card">
+          <h3>display (block, inline, inline-block, none, flex, grid)</h3>
+          <div class="disp-block">display: block 1</div>
+          <div class="disp-block">display: block 2</div>
+          <div>
+            Text before <div class="disp-inline">display: inline</div> text after.
+            <div class="disp-inline-block">inline-block 1</div>
+            <div class="disp-inline-block">inline-block 2</div>
+          </div>
+          <div class="disp-none">display: none (must not be visible)</div>
+        </div>
+
+        <div class="card">
+          <h3>flex-direction (row, column, row-reverse, column-reverse)</h3>
+          <div class="flex-container fdir-row">
+            <div class="flex-item">Row 1</div><div class="flex-item">Row 2</div><div class="flex-item">Row 3</div>
+          </div>
+          <div class="flex-container fdir-row-rev">
+            <div class="flex-item">Row-Rev 1</div><div class="flex-item">Row-Rev 2</div><div class="flex-item">Row-Rev 3</div>
+          </div>
+          <div class="flex-container fdir-col">
+            <div class="flex-item">Col 1</div><div class="flex-item">Col 2</div>
+          </div>
+          <div class="flex-container fdir-col-rev">
+            <div class="flex-item">Col-Rev 1</div><div class="flex-item">Col-Rev 2</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>flex-wrap (nowrap, wrap, wrap-reverse)</h3>
+          <div class="flex-container fwrap-nowrap">
+            <div class="flex-item">Item 1</div><div class="flex-item">Item 2</div><div class="flex-item">Item 3</div>
+          </div>
+          <div class="flex-container fwrap-wrap">
+            <div class="flex-item">Wrap 1</div><div class="flex-item">Wrap 2</div><div class="flex-item">Wrap 3</div>
+          </div>
+          <div class="flex-container fwrap-wrap-rev">
+            <div class="flex-item">WrapRev 1</div><div class="flex-item">WrapRev 2</div><div class="flex-item">WrapRev 3</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>justify-content (flex-start, flex-end, center, space-between, space-around)</h3>
+          <div class="flex-container fjc-start"><div class="flex-item">Start 1</div><div class="flex-item">Start 2</div></div>
+          <div class="flex-container fjc-end"><div class="flex-item">End 1</div><div class="flex-item">End 2</div></div>
+          <div class="flex-container fjc-center"><div class="flex-item">Center 1</div><div class="flex-item">Center 2</div></div>
+          <div class="flex-container fjc-between"><div class="flex-item">Between 1</div><div class="flex-item">Between 2</div></div>
+          <div class="flex-container fjc-around"><div class="flex-item">Around 1</div><div class="flex-item">Around 2</div></div>
+        </div>
+
+        <div class="card">
+          <h3>align-items (flex-start, flex-end, center, stretch)</h3>
+          <div class="flex-container fai-start"><div class="flex-item">ai-start</div></div>
+          <div class="flex-container fai-end"><div class="flex-item">ai-end</div></div>
+          <div class="flex-container fai-center"><div class="flex-item">ai-center</div></div>
+          <div class="flex-container fai-stretch"><div class="flex-item">ai-stretch</div></div>
+        </div>
+
+        <div class="card">
+          <h3>align-content (flex-start, flex-end, center, space-between, space-around, stretch)</h3>
+          <div class="flex-container fac-start"><div class="flex-item">ac-start</div><div class="flex-item">item B</div></div>
+          <div class="flex-container fac-end"><div class="flex-item">ac-end</div><div class="flex-item">item B</div></div>
+          <div class="flex-container fac-center"><div class="flex-item">ac-center</div><div class="flex-item">item B</div></div>
+          <div class="flex-container fac-between"><div class="flex-item">ac-between</div><div class="flex-item">item B</div></div>
+          <div class="flex-container fac-around"><div class="flex-item">ac-around</div><div class="flex-item">item B</div></div>
+          <div class="flex-container fac-stretch"><div class="flex-item">ac-stretch</div><div class="flex-item">item B</div></div>
+        </div>
+
+        <div class="card">
+          <h3>flex-grow, flex-shrink, flex-basis, flex shorthand, order, gap, row-gap, column-gap</h3>
+          <div class="flex-container gap-all">
+            <div class="flex-item fitem-grow-1">grow: 1</div>
+            <div class="flex-item fitem-grow-3">grow: 3 (larger)</div>
+          </div>
+          <div class="flex-container gap-row-col">
+            <div class="flex-item fitem-basis">basis: 150px</div>
+            <div class="flex-item fitem-shorthand">flex: 2 1 120px</div>
+            <div class="flex-item fitem-shrink-0">shrink: 0</div>
+            <div class="flex-item fitem-shrink-2">shrink: 2</div>
+          </div>
+          <div class="flex-container">
+            <div class="flex-item ord-2">Visual 3rd (order: 2)</div>
+            <div class="flex-item ord-neg">Visual 1st (order: -1)</div>
+            <div class="flex-item ord-1">Visual 2nd (order: 1)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Grid Bounded Subset: grid-template-columns, grid-template-rows, grid-column, grid-row, start, end</h3>
+          <div class="grid-container grid-tracks-basic gap-all">
+            <div class="grid-item grid-placed-col">Col span 1 / 3</div>
+            <div class="grid-item">Cell 3</div>
+            <div class="grid-item">Cell 4</div>
+            <div class="grid-item">Cell 5</div>
+            <div class="grid-item">Cell 6</div>
+          </div>
+          <div class="grid-container grid-tracks-intrinsic gap-row-col">
+            <div class="grid-item grid-placed-row">Row span 1 / 3</div>
+            <div class="grid-item">Min-Content Header</div>
+            <div class="grid-item">Auto Content Item</div>
+            <div class="grid-item">Row 2 Item</div>
+            <div class="grid-item">Row 2 Auto</div>
+          </div>
+          <div class="grid-container grid-tracks-repeat">
+            <div class="grid-item grid-placed-start-end">Start 2, End 4, RowStart 1, RowEnd 3</div>
+            <div class="grid-item">Item A</div>
+            <div class="grid-item">Item B</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. TYPOGRAPHY ================= -->
+      <section id="sec-typography">
+        <h2>3. Typography (12 Properties)</h2>
+
+        <div class="card">
+          <h3>font-family, font-size, font-style</h3>
+          <p class="font-serif fs-large fstyle-normal">Serif font family, 24px, style normal</p>
+          <p class="font-sans fs-small fstyle-italic">Sans-serif font family, 11px, style italic</p>
+          <p class="font-mono">Monospace font family</p>
+        </div>
+
+        <div class="card">
+          <h3>font-weight (100-900, normal, bold)</h3>
+          <p class="fw-100">font-weight: 100</p>
+          <p class="fw-300">font-weight: 300</p>
+          <p class="fw-400">font-weight: 400</p>
+          <p class="fw-600">font-weight: 600</p>
+          <p class="fw-700">font-weight: 700</p>
+          <p class="fw-900">font-weight: 900</p>
+          <p class="fw-normal">font-weight: normal</p>
+          <p class="fw-bold">font-weight: bold</p>
+        </div>
+
+        <div class="card">
+          <h3>line-height</h3>
+          <p class="lh-tight">Tight line height (1.1): The quick brown fox jumps over the lazy dog repeatedly to demonstrate tight vertical line spacing.</p>
+          <p class="lh-loose">Loose line height (2.8): The quick brown fox jumps over the lazy dog repeatedly to demonstrate loose vertical line spacing.</p>
+        </div>
+
+        <div class="card">
+          <h3>text-align (left, right, center, justify, start, end)</h3>
+          <p class="ta-left">text-align: left</p>
+          <p class="ta-right">text-align: right</p>
+          <p class="ta-center">text-align: center</p>
+          <p class="ta-justify">text-align: justify — WebVeld specifies a bounded subset of modern web standards ensuring strict visual parity across conforming browsers while maintaining zero client-side scripting.</p>
+          <p class="ta-start">text-align: start</p>
+          <p class="ta-end">text-align: end</p>
+        </div>
+
+        <div class="card">
+          <h3>text-decoration &amp; text-transform</h3>
+          <p class="td-under tt-upper">underline &amp; uppercase: sample heading text</p>
+          <p class="td-strike tt-lower">line-through &amp; lowercase: SAMPLE HEADING TEXT</p>
+          <p class="td-none tt-cap">none &amp; capitalize: the quick brown fox jumps over the lazy dog</p>
+        </div>
+
+        <div class="card">
+          <h3>letter-spacing &amp; word-spacing — Exaggerated Test</h3>
+          <p class="spacing-exaggerated">Exaggerated spacing: 16px letter gap and 40px word gap.</p>
+        </div>
+
+        <div class="card">
+          <h3>white-space (normal, nowrap, pre, pre-wrap, pre-line)</h3>
+          <div class="ws-box ws-normal">normal:   two   spaces
+and newline wraps normally</div>
+          <div class="ws-box ws-nowrap">nowrap: text that overflows without wrapping</div>
+          <div class="ws-box ws-pre">pre:   preserved   spaces
+and newlines</div>
+          <div class="ws-box ws-prewrap">pre-wrap:   preserved   spaces
+and wrapped long lines</div>
+          <div class="ws-box ws-preline">pre-line:   collapsed   spaces
+preserved newline</div>
+        </div>
+
+        <div class="card">
+          <h3>overflow-wrap &amp; word-break</h3>
+          <div class="break-box ow-normal">normal: VeryLongWordSupercalifragilisticexpialidocious</div>
+          <div class="break-box ow-break">break-word: VeryLongWordSupercalifragilisticexpialidocious</div>
+          <div class="break-box ow-anywhere">anywhere: VeryLongWordSupercalifragilisticexpialidocious</div>
+          <div class="break-box wb-normal">wb-normal: VeryLongWordSupercalifragilisticexpialidocious</div>
+          <div class="break-box wb-all">break-all: VeryLongWordSupercalifragilisticexpialidocious</div>
+          <div class="break-box wb-keep">keep-all: VeryLongWordSupercalifragilisticexpialidocious</div>
+        </div>
+      </section>
+
+      <!-- ================= 4. COLOR AND BACKGROUND ================= -->
+      <section id="sec-color-bg">
+        <h2>4. Color &amp; Background (7 Properties)</h2>
+
+        <div class="card">
+          <h3>color, background-color, opacity</h3>
+          <p class="color-hex">Hex color #c53030</p>
+          <p class="color-rgb">RGB color rgb(43, 108, 176)</p>
+          <p class="color-hsl">HSL color hsl(142, 72%, 29%)</p>
+          <p class="color-curr">currentColor border and text</p>
+          <div class="bg-col">background-color: #feebc8</div>
+          <div>
+            <div class="op-box op-10">1.0</div>
+            <div class="op-box op-6">0.6</div>
+            <div class="op-box op-2">0.2</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>background-image, background-repeat, background-position, background shorthand</h3>
+          <div class="bg-img bg-rep-repeat">repeat (pattern across container)</div>
+          <div class="bg-img bg-rep-x">repeat-x (horizontal strip)</div>
+          <div class="bg-img bg-rep-y">repeat-y (vertical strip)</div>
+          <div class="bg-img bg-rep-no bg-pos-top-left">no-repeat top left</div>
+          <div class="bg-img bg-rep-no bg-pos-center">no-repeat center</div>
+          <div class="bg-img bg-rep-no bg-pos-bottom-right">no-repeat bottom right</div>
+          <div class="bg-shorthand">background shorthand: color, image, no-repeat, center</div>
+        </div>
+      </section>
+
+      <!-- ================= 5. LISTS ================= -->
+      <section id="sec-lists">
+        <h2>5. Lists (3 Properties)</h2>
+
+        <div class="card">
+          <h3>list-style-type (disc, circle, square, decimal, alpha, roman, none)</h3>
+          <ul class="lst-disc"><li>disc item</li></ul>
+          <ul class="lst-circle"><li>circle item</li></ul>
+          <ul class="lst-square"><li>square item</li></ul>
+          <ol class="lst-decimal"><li>decimal item</li></ol>
+          <ol class="lst-lower-alpha"><li>lower-alpha item</li></ol>
+          <ol class="lst-upper-alpha"><li>upper-alpha item</li></ol>
+          <ol class="lst-lower-roman"><li>lower-roman item</li></ol>
+          <ol class="lst-upper-roman"><li>upper-roman item</li></ol>
+          <ul class="lst-none"><li>none (no bullet)</li></ul>
+        </div>
+
+        <div class="card">
+          <h3>list-style-position &amp; list-style shorthand</h3>
+          <ul class="lsp-inside"><li>list-style-position: inside (marker inside box)</li></ul>
+          <ul class="lsp-outside"><li>list-style-position: outside (marker outside box)</li></ul>
+          <ul class="list-shorthand"><li>list-style: square inside shorthand</li></ul>
+        </div>
+      </section>
+
+      <!-- ================= 6. TABLES ================= -->
+      <section id="sec-tables-prop">
+        <h2>6. Tables (4 Properties)</h2>
+
+        <div class="card">
+          <h3>caption-side (top vs bottom) &amp; border-collapse / border-spacing</h3>
+          <table class="tbl-prop tbl-collapse">
+            <caption class="cap-top">caption-side: top with border-collapse: collapse</caption>
+            <thead><tr><th>Header 1</th><th>Header 2</th></tr></thead>
+            <tbody><tr><td>Data A</td><td>Data B</td></tr></tbody>
+          </table>
+
+          <table class="tbl-prop tbl-separate">
+            <caption class="cap-bottom">caption-side: bottom with border-collapse: separate and border-spacing: 16px</caption>
+            <thead><tr><th>Header 1</th><th>Header 2</th></tr></thead>
+            <tbody><tr><td>Data A</td><td>Data B</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>empty-cells (show vs hide) — Exaggerated Test</h3>
+          <p>Table with empty-cells: show (thick red border around empty cell is visible):</p>
+          <table class="tbl-prop tbl-separate ec-show">
+            <tr><td>Populated Cell</td><td class="empty-td"></td></tr>
+          </table>
+
+          <p>Table with empty-cells: hide (thick red border around empty cell is hidden):</p>
+          <table class="tbl-prop tbl-separate ec-hide">
+            <tr><td>Populated Cell</td><td class="empty-td"></td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 7. OTHER ================= -->
+      <section id="sec-other-prop">
+        <h2>7. Other (7 Properties)</h2>
+
+        <div class="card">
+          <h3>overflow, overflow-x, overflow-y (visible, hidden, scroll, auto)</h3>
+          <div class="overflow-box ov-visible"><div class="overflow-content">overflow: visible</div></div>
+          <div class="overflow-box ov-hidden"><div class="overflow-content">overflow: hidden</div></div>
+          <div class="overflow-box ov-scroll"><div class="overflow-content">overflow: scroll</div></div>
+          <div class="overflow-box ov-auto"><div class="overflow-content">overflow: auto</div></div>
+          <div class="overflow-box ovx-scroll"><div class="overflow-content">overflow-x: scroll</div></div>
+          <div class="overflow-box ovy-scroll"><div class="overflow-content">overflow-y: scroll</div></div>
+          <div class="overflow-box ovx-auto"><div class="overflow-content">overflow-x: auto</div></div>
+          <div class="overflow-box ovy-auto"><div class="overflow-content">overflow-y: auto</div></div>
+          <div class="overflow-box ovx-visible"><div class="overflow-content">overflow-x: visible</div></div>
+          <div class="overflow-box ovy-visible"><div class="overflow-content">overflow-y: visible</div></div>
+        </div>
+
+        <div class="card">
+          <h3>content (on ::before and ::after only)</h3>
+          <p class="content-gen">Generated content element</p>
+          <p class="content-none content-normal">Content none and normal test</p>
+        </div>
+
+        <div class="card">
+          <h3>cursor (auto, default, pointer, text)</h3>
+          <div class="cur-box cur-auto">cursor: auto</div>
+          <div class="cur-box cur-default">cursor: default</div>
+          <div class="cur-box cur-pointer">cursor: pointer</div>
+          <div class="cur-box cur-text">cursor: text</div>
+        </div>
+
+        <div class="card">
+          <h3>vertical-align (baseline, top, middle, bottom, sub, super) — Exaggerated Line</h3>
+          <div class="va-container">
+            Text:
+            <span class="va-baseline">baseline</span> |
+            <span class="va-top">top</span> |
+            <span class="va-middle">middle</span> |
+            <span class="va-bottom">bottom</span> |
+            <span class="va-sub">sub</span> |
+            <span class="va-super">super</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>intrinsic sizing keywords (min-content, max-content)</h3>
+          <div class="intrinsic-max">width: max-content with min-width: 100%</div>
+          <div class="intrinsic-min">width: min-content</div>
+          <div class="intrinsic-h">height: max-content; min-height: min-content</div>
+          <div class="intrinsic-caps">max-width: max-content; max-height: max-content</div>
+        </div>
+
+        <div class="card">
+          <h3>clip-path (none, inset and rect)</h3>
+          <div class="clip-inset">clip-path: inset(15px 25px 10px 15px)</div>
+          <div class="clip-rect">clip-path: rect(10px 140px 80px 15px)</div>
+          <div class="clip-none">clip-path: none</div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 6.2 Properties and Values</p>
+    </footer>
+  </body>
+</html>

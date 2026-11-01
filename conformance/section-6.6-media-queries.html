@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Section 6.6: Conformance Suite — Media Queries</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC">
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #1a202c;
+        background-color: #f7fafc;
+      }
+      header, footer, main, section {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+      }
+      header {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+      }
+      h1 { font-size: 26px; color: #2b6cb0; margin: 0 0 10px 0; }
+      h2 { font-size: 20px; color: #2c5282; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      h3 { font-size: 16px; color: #4a5568; margin: 12px 0 6px 0; }
+      p { margin: 8px 0; }
+      .card {
+        border: 2px solid #cbd5e0;
+        padding: 14px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+
+      /* Base indicator styling (inactive baseline) */
+      .mq-box {
+        padding: 14px;
+        margin: 8px 0;
+        border: 3px solid #e53e3e;
+        background-color: #fed7d7;
+        color: #742a2a;
+        font-weight: bold;
+      }
+      .mq-status::after {
+        content: " [INACTIVE: condition not currently matched]";
+        color: #c53030;
+      }
+
+      /* 1. min-width condition */
+      @media (min-width: 600px) {
+        .mq-min-width {
+          border-color: #276749;
+          background-color: #c6f6d5;
+          color: #22543d;
+        }
+        .status-min-width::after {
+          content: " [ACTIVE: viewport width >= 600px matched!]";
+          color: #22543d;
+        }
+      }
+
+      /* 2. max-width condition */
+      @media (max-width: 799px) {
+        .mq-max-width {
+          border-color: #276749;
+          background-color: #c6f6d5;
+          color: #22543d;
+        }
+        .status-max-width::after {
+          content: " [ACTIVE: viewport width <= 799px matched!]";
+          color: #22543d;
+        }
+      }
+
+      /* 3. exact width condition */
+      @media (width: 800px) {
+        .mq-exact-width {
+          border-color: #2b6cb0;
+          background-color: #bee3f8;
+          color: #2c5282;
+        }
+        .status-exact-width::after {
+          content: " [ACTIVE: viewport width exactly 800px matched!]";
+          color: #2c5282;
+        }
+      }
+
+      /* 4. Combined conditions with "and" */
+      @media (min-width: 500px) and (max-width: 900px) {
+        .mq-range-and {
+          border-color: #276749;
+          background-color: #c6f6d5;
+          color: #22543d;
+        }
+        .status-range-and::after {
+          content: " [ACTIVE: 500px <= viewport width <= 900px matched!]";
+          color: #22543d;
+        }
+      }
+
+      /* 5. Comma-separated alternative conditions (logical OR) */
+      @media (max-width: 450px), (min-width: 750px) {
+        .mq-or {
+          border-color: #276749;
+          background-color: #c6f6d5;
+          color: #22543d;
+        }
+        .status-or::after {
+          content: " [ACTIVE: viewport <= 450px OR >= 750px matched!]";
+          color: #22543d;
+        }
+      }
+
+      /* 6. Color Scheme: prefers-color-scheme: dark */
+      @media (prefers-color-scheme: dark) {
+        .mq-dark {
+          border-color: #805ad5;
+          background-color: #2d3748;
+          color: #faf5ff;
+        }
+        .status-dark::after {
+          content: " [ACTIVE: prefers-color-scheme: dark matched!]";
+          color: #9f7aea;
+        }
+      }
+
+      /* 7. Color Scheme: prefers-color-scheme: light */
+      @media (prefers-color-scheme: light) {
+        .mq-light {
+          border-color: #d69e2e;
+          background-color: #fefcbf;
+          color: #744210;
+        }
+        .status-light::after {
+          content: " [ACTIVE: prefers-color-scheme: light matched!]";
+          color: #744210;
+        }
+      }
+
+      /* 8. Print stylesheet */
+      @media print {
+        body {
+          background-color: #ffffff;
+          color: #000000;
+          margin: 0;
+        }
+        .mq-print {
+          border: 4px solid #000000;
+          background-color: #ffffff;
+          color: #000000;
+        }
+        .status-print::after {
+          content: " [ACTIVE: print media matched!]";
+          color: #000000;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Section 6.6: Media Queries Conformance Test</h1>
+      <p>Exercises all permitted media query features: min-width, max-width, exact width, prefers-color-scheme (light and dark), and combining, comma alternative querying, and print media.</p>
+    </header>
+
+    <main>
+      <!-- ================= 1. DIMENSION CONSTRAINTS ================= -->
+      <section id="sec-dimensions">
+        <h2>1. Dimension Constraints (min-width, max-width, width)</h2>
+        <div class="card">
+          <h3>min-width: @media (min-width: 600px)</h3>
+          <div class="mq-box mq-min-width">
+            Condition: <code>(min-width: 600px)</code>
+            <span class="mq-status status-min-width"></span>
+          </div>
+
+          <h3>max-width: @media (max-width: 799px)</h3>
+          <div class="mq-box mq-max-width">
+            Condition: <code>(max-width: 799px)</code>
+            <span class="mq-status status-max-width"></span>
+          </div>
+
+          <h3>exact width: @media (width: 800px)</h3>
+          <div class="mq-box mq-exact-width">
+            Condition: <code>(width: 800px)</code>
+            <span class="mq-status status-exact-width"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. COMBINATORS AND ALTERNATIVES ================= -->
+      <section id="sec-combinators-mq">
+        <h2>2. Combinators (and) &amp; Alternatives (comma)</h2>
+        <div class="card">
+          <h3>and: @media (min-width: 500px) and (max-width: 900px)</h3>
+          <div class="mq-box mq-range-and">
+            Condition: <code>(min-width: 500px) and (max-width: 900px)</code>
+            <span class="mq-status status-range-and"></span>
+          </div>
+
+          <h3>comma (OR): @media (max-width: 450px), (min-width: 750px)</h3>
+          <div class="mq-box mq-or">
+            Condition: <code>(max-width: 450px), (min-width: 750px)</code>
+            <span class="mq-status status-or"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. COLOR SCHEMES ================= -->
+      <section id="sec-color-scheme">
+        <h2>3. Color Schemes (prefers-color-scheme: dark | light)</h2>
+        <div class="card">
+          <h3>prefers-color-scheme: dark</h3>
+          <div class="mq-box mq-dark">
+            Condition: <code>(prefers-color-scheme: dark)</code>
+            <span class="mq-status status-dark"></span>
+          </div>
+
+          <h3>prefers-color-scheme: light</h3>
+          <div class="mq-box mq-light">
+            Condition: <code>(prefers-color-scheme: light)</code>
+            <span class="mq-status status-light"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. PRINT MEDIA ================= -->
+      <section id="sec-print">
+        <h2>4. Print Media (@media print)</h2>
+        <div class="card">
+          <h3>@media print</h3>
+          <div class="mq-box mq-print">
+            Condition: <code>@media print</code>
+            <span class="mq-status status-print"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 6.6 Media Queries</p>
+    </footer>
+  </body>
+</html>

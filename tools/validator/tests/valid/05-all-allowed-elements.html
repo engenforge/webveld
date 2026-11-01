@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Test document exercising all newly allowed elements and attributes">
+    <meta name="keywords" content="test, webveld, conformance">
+    <meta name="author" content="WebVeld Test Suite">
+    <meta name="color-scheme" content="light dark">
+    <title>All Allowed Elements and Attributes</title>
+  </head>
+  <body>
+    <header>
+      <h1>Test Heading</h1>
+      <nav>
+        <ul>
+          <li><a href="#table">Table</a></li>
+          <li><a href="#code">Code</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section>
+        <p>Text formatting: <i>italic</i>, <b>bold</b>, <u>underline</u>, <em>emphasis</em>, <strong>strong</strong>, <mark>marked</mark>, <small>small</small>, <sub>sub</sub>, <sup>sup</sup>, <del>deleted</del>, <ins>inserted</ins>, <dfn>definition</dfn>, <time datetime="2026-09-08">today</time>, <q>quote</q>, <abbr title="HyperText Markup Language">HTML</abbr>, <kbd>Ctrl</kbd>, <samp>output</samp>, <var>x</var>.</p>
+      </section>
+      <section id="code">
+        <h2>Code and Tabindex</h2>
+        <pre tabindex="0"><code data-lang="python">print("hello world")</code></pre>
+      </section>
+      <section id="table">
+        <h2>Tables with Alignment</h2>
+        <table>
+          <caption>Sample Alignment Table</caption>
+          <colgroup>
+            <col span="1">
+            <col span="1">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Alice</td>
+              <td>95</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer>
+      <p><small>&copy; 2026 WebVeld</small></p>
+    </footer>
+  </body>
+</html>

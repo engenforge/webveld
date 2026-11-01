@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Section 6.4: Conformance Suite — Allowed Units</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABJZTOkAAAAG0lEQVR4nGP4z8DAAAMDAxMYGBhjgAAAAAD//wSuARk2DISzAAAAAElFTkSuQmCC">
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.5;
+        margin: 20px;
+        color: #1a202c;
+        background-color: #f7fafc;
+      }
+      header, footer, main, section {
+        display: block;
+        margin-bottom: 24px;
+        padding: 16px;
+        background-color: #ffffff;
+        border: 2px solid #e2e8f0;
+      }
+      header {
+        border-color: #2b6cb0;
+        background-color: #ebf8ff;
+      }
+      h1 { font-size: 26px; color: #2b6cb0; margin: 0 0 10px 0; }
+      h2 { font-size: 20px; color: #2c5282; margin: 0 0 12px 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+      h3 { font-size: 16px; color: #4a5568; margin: 12px 0 6px 0; }
+      p { margin: 8px 0; }
+      .card {
+        border: 2px solid #cbd5e0;
+        padding: 14px;
+        margin: 12px 0;
+        background-color: #ffffff;
+      }
+
+      .bar-container {
+        border-left: 4px solid #1a202c;
+        padding: 4px 0 4px 10px;
+        margin: 8px 0;
+        background-color: #edf2f7;
+      }
+      .unit-bar {
+        height: 32px;
+        line-height: 32px;
+        padding-left: 8px;
+        margin: 4px 0;
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      /* --- Absolute Units (Standard 192px = 2in = 144pt = 5.08cm = 50.8mm) --- */
+      .bar-px { width: 192px; background-color: #2b6cb0; }
+      .bar-in { width: 2in; background-color: #3182ce; }
+      .bar-pt { width: 144pt; background-color: #4299e1; }
+      .bar-cm { width: 5.08cm; background-color: #2b6cb0; }
+      .bar-mm { width: 50.8mm; background-color: #3182ce; }
+
+      /* --- Relative Units --- */
+      .rel-scope {
+        font-size: 16px;
+      }
+      .bar-em { width: 12em; background-color: #276749; }
+      .bar-rem { width: 12rem; background-color: #38a169; }
+      .bar-ex { width: 24ex; background-color: #48bb78; }
+      .bar-ch { width: 22ch; font-family: monospace; background-color: #2f855a; }
+      .bar-pct { width: 60%; background-color: #22543d; }
+
+      /* --- Viewport Units --- */
+      .bar-vw { width: 35vw; background-color: #6b46c1; }
+      .bar-vh { width: 250px; height: 10vh; line-height: 10vh; background-color: #805ad5; }
+      .bar-vmin { width: 25vmin; background-color: #9f7aea; }
+      .bar-vmax { width: 35vmax; background-color: #553c9a; }
+
+      /* --- calc() with allowed units and operators --- */
+      .bar-calc-add { width: calc(120px + 72px); background-color: #c53030; }
+      .bar-calc-sub { width: calc(100% - 100px); background-color: #e53e3e; }
+      .bar-calc-mul { width: calc(2.5rem * 4); background-color: #dd6b20; }
+      .bar-calc-div { width: calc(384px / 2); background-color: #d69e2e; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Section 6.4: Allowed Units Conformance Test</h1>
+      <p>Exercises every unit permitted in Section 6.4 (absolute, relative, viewport) and calc() expressions.</p>
+    </header>
+
+    <main>
+      <!-- ================= 1. ABSOLUTE UNITS ================= -->
+      <section id="sec-absolute">
+        <h2>1. Absolute Units (px, in, pt, cm, mm)</h2>
+        <div class="card">
+          <p>
+            All 5 bars below are defined to equal exactly 192px (2 inches at 96 CSS dpi).
+            In a conforming CSS engine, all 5 bars must have identical width matching the reference line:
+          </p>
+          <div class="bar-container">
+            <div class="unit-bar bar-px">192px (px - reference)</div>
+            <div class="unit-bar bar-in">2in (in = 192px)</div>
+            <div class="unit-bar bar-pt">144pt (pt: 1pt = 4/3 px)</div>
+            <div class="unit-bar bar-cm">5.08cm (cm: 1in = 2.54cm)</div>
+            <div class="unit-bar bar-mm">50.8mm (mm: 1cm = 10mm)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. RELATIVE UNITS ================= -->
+      <section id="sec-relative">
+        <h2>2. Relative Units (em, rem, ex, ch, %)</h2>
+        <div class="card rel-scope">
+          <p>Relative unit sizing against typography and containing block dimensions:</p>
+          <div class="bar-container">
+            <div class="unit-bar bar-em">12em (relative to element font-size)</div>
+            <div class="unit-bar bar-rem">12rem (relative to root font-size)</div>
+            <div class="unit-bar bar-ex">24ex (relative to font x-height)</div>
+            <div class="unit-bar bar-ch">22ch (relative to monospace "0" width)</div>
+            <div class="unit-bar bar-pct">60% (relative to container width)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. VIEWPORT UNITS ================= -->
+      <section id="sec-viewport">
+        <h2>3. Viewport Units (vw, vh, vmin, vmax)</h2>
+        <div class="card">
+          <p>Viewport units dynamic sizing against the layout viewport:</p>
+          <div class="bar-container">
+            <div class="unit-bar bar-vw">35vw (35% of viewport width)</div>
+            <div class="unit-bar bar-vh">10vh (10% of viewport height)</div>
+            <div class="unit-bar bar-vmin">25vmin (25% of smaller viewport dimension)</div>
+            <div class="unit-bar bar-vmax">35vmax (35% of larger viewport dimension)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. CALC() FUNCTION ================= -->
+      <section id="sec-calc">
+        <h2>4. Mathematical calc() Function (+, -, *, /)</h2>
+        <div class="card">
+          <p>calc() calculations using basic arithmetic operators with allowed units:</p>
+          <div class="bar-container">
+            <div class="unit-bar bar-calc-add">calc(120px + 72px) = 192px (+)</div>
+            <div class="unit-bar bar-calc-sub">calc(100% - 100px) (-)</div>
+            <div class="unit-bar bar-calc-mul">calc(2.5rem * 4) = 10rem (*)</div>
+            <div class="unit-bar bar-calc-div">calc(384px / 2) = 192px (/)</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>WebVeld Conformance Suite — Section 6.4 Units</p>
+    </footer>
+  </body>
+</html>

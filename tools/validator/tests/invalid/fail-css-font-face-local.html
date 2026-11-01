@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Forbidden Font Face Local</title>
+    <style>
+      @font-face {
+        font-family: "Custom";
+        /* expect: local() in @font-face is forbidden (6.5) */
+        src: local("Helvetica");
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

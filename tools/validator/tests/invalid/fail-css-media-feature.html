@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Media Feature Forbidden</title>
+    <style>
+      /* expect: media feature `orientation` is not permitted (6.6) */
+      @media (orientation: landscape) {
+        body { color: green; }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Test</p>
+  </body>
+</html>

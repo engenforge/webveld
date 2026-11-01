@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Visited Non-Color Property Forbidden</title>
+    <style>
+      /* expect: property `font-size` in :visited is forbidden; only color properties are permitted (6.3) */
+      a:visited {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <p><a href="/page">Link</a></p>
+  </body>
+</html>

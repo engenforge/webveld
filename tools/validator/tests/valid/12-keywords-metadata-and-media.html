@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta property="og:title" content="Keywords, metadata, and media">
+    <title>Keywords, metadata, and media</title>
+    <link rel="icon" href="icon.png">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+    <link rel="alternate" type="application/atom+xml" href="feed.xml" title="Feed">
+    <style>
+      p { display: inherit; text-align: initial; cursor: unset; color: inherit; }
+      @media print { p { color: black; } }
+      @media (min-width: 600px) and (prefers-color-scheme: dark), (max-width: 300px) {
+        p { color: white; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 tabindex="-1" id="top">Top</h1>
+      <p dir="rtl" tabindex="0">Text</p>
+      <details open>
+        <!-- a comment before the summary is fine -->
+        <summary>More</summary>
+        <p>Details</p>
+      </details>
+      <form action="/s">
+        <label>Agree <input type="checkbox" name="a" checked></label>
+        <label>Pick <input type="radio" name="r" value="1" checked></label>
+      </form>
+    </main>
+  </body>
+</html>

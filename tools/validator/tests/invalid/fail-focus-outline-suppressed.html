@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Suppressed focus indicator</title>
+<style>
+/* expect: a :focus rule removes the outline without establishing another visible indicator (9) */
+a { color: #06c; }
+a:focus { outline: none; }
+</style>
+</head>
+<body>
+<h1>Suppressed focus indicator</h1>
+<p>Section 9 forbids a <code>:focus</code> rule that removes the outline without
+establishing another visible indicator. This block sets nothing else.</p>
+<p><a href="/somewhere">A link whose focus ring this document removed.</a></p>
+</body>
+</html>

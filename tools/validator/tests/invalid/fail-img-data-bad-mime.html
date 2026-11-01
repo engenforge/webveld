@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Data URL Bad MIME</title>
+  </head>
+  <body>
+    <!-- expect: data: image URL must be image/png or image/jpeg (7.1, 7.4) -->
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="1x1 GIF">
+  </body>
+</html>
