@@ -235,8 +235,9 @@ for i = 1, #arg do
 end
 
 if #args == 0 then
-    io.stderr:write(string.format([[usage: %s [--classify] [--css] [--format=text|json] FILE...
+    io.stderr:write(string.format([[usage: %s [--classify] [--css] [--format=text|json] PATH...
 
+  PATH             HTML/CSS file or directory (searched recursively).
   --css            Treat every input as a style sheet rather than a document.
                    Inputs ending in .css are detected without this.
   --format=json    Emit findings as JSON, for callers that would otherwise
@@ -1008,7 +1009,7 @@ end
 local classify_opt = false
 local force_css = false
 local format = "text"
-local files = {}
+local inputs = {}
 
 local idx = 1
 while idx <= #args do
@@ -1022,7 +1023,7 @@ while idx <= #args do
     elseif a == "--" then
         idx = idx + 1
         while idx <= #args do
-            table.insert(files, args[idx])
+            table.insert(inputs, args[idx])
             idx = idx + 1
         end
         break
@@ -1030,7 +1031,7 @@ while idx <= #args do
         io.stderr:write(string.format("%s: unknown option %s\n", arg[0] or "webveld-validate", a))
         os.exit(1)
     else
-        table.insert(files, a)
+        table.insert(inputs, a)
     end
     idx = idx + 1
 end
@@ -1038,6 +1039,60 @@ end
 if format ~= "text" and format ~= "json" then
     io.stderr:write(string.format("%s: --format must be text or json\n", arg[0] or "webveld-validate"))
     os.exit(1)
+end
+
+local function shell_quote(s)
+    return "'" .. s:gsub("'", "'\\''") .. "'"
+end
+
+local function is_dir(path)
+    local ok = os.execute("test -d " .. shell_quote(path))
+    return ok == true or ok == 0
+end
+
+local function is_target_file(path, css_only)
+    local lower = path:lower()
+    if css_only then
+        return lower:match("%.css$") ~= nil
+    end
+    return lower:match("%.html$") ~= nil
+        or lower:match("%.htm$") ~= nil
+        or lower:match("%.css$") ~= nil
+end
+
+local function collect_dir_files(dir, css_only)
+    local clean = dir:gsub("/+$", "")
+    if clean == "" then clean = "/" end
+    local found = {}
+    local p = io.popen("find " .. shell_quote(clean) .. " -type f 2>/dev/null | sort")
+    if p then
+        for line in p:lines() do
+            if is_target_file(line, css_only) then
+                table.insert(found, line)
+            end
+        end
+        p:close()
+    end
+    return found
+end
+
+local files = {}
+local failed = 0
+
+for _, input in ipairs(inputs) do
+    if is_dir(input) then
+        local found = collect_dir_files(input, force_css)
+        if #found == 0 then
+            failed = failed + 1
+            io.stderr:write(string.format("%s: no matching files in %s\n", arg[0] or "webveld-validate", input))
+        else
+            for _, f in ipairs(found) do
+                table.insert(files, f)
+            end
+        end
+    else
+        table.insert(files, input)
+    end
 end
 
 -- A style sheet is not a document, and handing one to the document checks
@@ -1068,7 +1123,6 @@ if format == "text" then
         spec_path, element_count, prop_count, itype_count))
 end
 
-local failed = 0
 local results = {}
 
 for _, file in ipairs(files) do

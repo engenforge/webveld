@@ -6,7 +6,7 @@ webveld-validate - reference conformance validator for the WebVeld specification
 
 # SYNOPSIS
 
-*webveld-validate* [*--classify*] [*--css*] [*--format*=_text_|_json_] _FILE_...
+*webveld-validate* [*--classify*] [*--css*] [*--format*=_text_|_json_] _PATH_...
 
 # DESCRIPTION
 
@@ -14,6 +14,9 @@ webveld-validate - reference conformance validator for the WebVeld specification
 normative WebVeld specification. WebVeld is a family of minimal subsets of
 HTML5 and CSS for documents that look the same in a purpose-built minimalist
 browser and in any modern web browser.
+
+Each _PATH_ may be a file or a directory. Directories are walked recursively for
+_.html_, _.htm_, and _.css_ files (or only _.css_ files when *--css* is given).
 
 The element, attribute, CSS property, and input-type allowlists are read from
 the specification's own tables at run time, so they cannot drift from the

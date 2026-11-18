@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "webveld\-validate" "1" "2026\-11\-02" "WebVeld 0.10.1" "User Commands"
+.TH "webveld\-validate" "1" "2026\-11\-03" "WebVeld 0.10.1" "User Commands"
 .PP
 .SH NAME
 .PP
@@ -13,7 +13,7 @@ webveld\-validate \- reference conformance validator for the WebVeld specificati
 .PP
 .SH SYNOPSIS
 .PP
-\fBwebveld\-validate\fR [\fB\-\-classify\fR] [\fB\-\-css\fR] [\fB\-\-format\fR=\fItext\fR|\fIjson\fR] \fIFILE\fR.\&.\&.\&
+\fBwebveld\-validate\fR [\fB\-\-classify\fR] [\fB\-\-css\fR] [\fB\-\-format\fR=\fItext\fR|\fIjson\fR] \fIPATH\fR.\&.\&.\&
 .PP
 .SH DESCRIPTION
 .PP
@@ -21,6 +21,9 @@ webveld\-validate \- reference conformance validator for the WebVeld specificati
 normative WebVeld specification.\& WebVeld is a family of minimal subsets of
 HTML5 and CSS for documents that look the same in a purpose\-built minimalist
 browser and in any modern web browser.\&
+.PP
+Each \fIPATH\fR may be a file or a directory.\& Directories are walked recursively for
+\fI.\&html\fR, \fI.\&htm\fR, and \fI.\&css\fR files (or only \fI.\&css\fR files when \fB\-\-css\fR is given).\&
 .PP
 The element, attribute, CSS property, and input\-type allowlists are read from
 the specification'\&s own tables at run time, so they cannot drift from the

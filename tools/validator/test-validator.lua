@@ -220,6 +220,59 @@ do
         failed = failed + 1
     end
 
+    total = total + 1
+    local exit_code, out = run_cmd(string.format("lua %s examples 2>&1", validator))
+    if exit_code == 0 and out:match("examples/minimal%-site/index%.html: conforms")
+        and out:match("examples/payment_processor/payment%-processor%-page%.html: conforms") then
+        io.write("  PASS: directory argument walks subdirectories recursively\n")
+        passed = passed + 1
+    else
+        io.write(string.format("  FAIL: directory traversal failed, got exit %d:\n%s\n", exit_code, out))
+        failed = failed + 1
+    end
+
+    total = total + 1
+    local tmp_empty = "tmp/test-empty-dir"
+    os.execute("mkdir -p " .. tmp_empty)
+    local exit_code, out = run_cmd(string.format("lua %s %q 2>&1", validator, tmp_empty))
+    os.execute("rmdir " .. tmp_empty)
+    if exit_code ~= 0 and out:match("no matching files") then
+        io.write("  PASS: empty directory exits non-zero\n")
+        passed = passed + 1
+    else
+        io.write(string.format("  FAIL: empty directory expected exit non-zero, got %d:\n%s\n", exit_code, out))
+        failed = failed + 1
+    end
+
+    total = total + 1
+    local tmp_css_dir = "tmp/test-css-dir/sub"
+    os.execute("mkdir -p " .. tmp_css_dir)
+    local f_html = io.open("tmp/test-css-dir/ignored.html", "w")
+    local f_css = io.open("tmp/test-css-dir/sub/ok.css", "w")
+    if f_html and f_css then
+        f_html:write("<html><body>not valid webveld</body></html>")
+        f_html:close()
+        f_css:write("body { color: #111; }\n")
+        f_css:close()
+        local exit_code, out = run_cmd(string.format("lua %s --css tmp/test-css-dir 2>&1", validator))
+        os.remove("tmp/test-css-dir/ignored.html")
+        os.remove("tmp/test-css-dir/sub/ok.css")
+        os.execute("rm -rf tmp/test-css-dir")
+        if exit_code == 0 and out:match("tmp/test%-css%-dir/sub/ok%.css: conforms")
+            and not out:match("ignored%.html") then
+            io.write("  PASS: --css with directory only validates .css files recursively\n")
+            passed = passed + 1
+        else
+            io.write(string.format("  FAIL: --css directory check failed, got exit %d:\n%s\n", exit_code, out))
+            failed = failed + 1
+        end
+    else
+        if f_html then f_html:close() end
+        if f_css then f_css:close() end
+        os.execute("rm -rf tmp/test-css-dir")
+        io.write("  SKIP: cannot create temporary directory test files\n")
+    end
+
     -- CSS token scanning performance regression check (prevent quadratic O(n^2) scaling)
     total = total + 1
     local perf_file = "tools/validator/tests/css/perf-test-tmp.css"
