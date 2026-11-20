@@ -1,4 +1,4 @@
-![WebVeld logo](media/logo/webveld-logo.png)
+![WebVeld logo](media/logo/webveld-logo-small.png)
 
 # WebVeld
 
