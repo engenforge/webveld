@@ -100,6 +100,20 @@ for row in a_sec:gmatch("[^\r\n]+") do
     end
 end
 
+-- Precompute the full allowed-attribute set per element so tag scanning does
+-- an O(1) table lookup instead of rebuilding a table on every opening tag.
+local allowed_attrs = {}
+for e in pairs(element) do
+    local t = {}
+    for k, v in pairs(global) do t[k] = v end
+    if attr[e] then
+        for _, a in ipairs(attr[e]) do
+            t[a:lower()] = true
+        end
+    end
+    allowed_attrs[e] = t
+end
+
 local t_line = spec:match("Allowed `input` types: ([^\r\n]+)") or ""
 local itype = {}
 local itype_count = 0
@@ -198,9 +212,11 @@ local function extract_rules(css)
     local last_sep = 1
 
     while i <= len do
-        local c = stripped:sub(i, i)
+        local brace = stripped:find("[{}]", i)
+        if not brace then break end
+        local c = stripped:sub(brace, brace)
         if c == "{" then
-            local header = stripped:sub(last_sep, i - 1):gsub("^%s+", ""):gsub("%s+$", "")
+            local header = stripped:sub(last_sep, brace - 1):gsub("^%s+", ""):gsub("%s+$", "")
             local h_l = header:lower()
             if h_l:match("^@media%f[%A]") then
                 in_media = true
@@ -210,9 +226,9 @@ local function extract_rules(css)
                 current_sel = header
             end
             depth = depth + 1
-            last_sep = i + 1
-        elseif c == "}" then
-            local decls = stripped:sub(last_sep, i - 1)
+            last_sep = brace + 1
+        else
+            local decls = stripped:sub(last_sep, brace - 1)
             if current_sel ~= "" then
                 table.insert(rules, { sel = current_sel, decls = decls, in_media = in_media })
                 current_sel = ""
@@ -222,9 +238,9 @@ local function extract_rules(css)
                 in_media = false
                 depth = 0
             end
-            last_sep = i + 1
+            last_sep = brace + 1
         end
-        i = i + 1
+        i = brace + 1
     end
     return rules
 end
@@ -260,9 +276,29 @@ local function check_doc(dom, o)
 
     -- elements and attributes via quote-aware tag scanner
     local seen_el = {}
+    local open_count = {}
     local reported = {}
     local bad_attrs = {}
     local has_inline_style = false
+    local heading_bad = {}
+    local prev_h = 0
+    local value_bad_list = {}
+    local seen_value_bad = {}
+    local function add_value_bad(msg)
+        if not seen_value_bad[msg] then
+            seen_value_bad[msg] = true
+            table.insert(value_bad_list, msg)
+        end
+    end
+    local el_attrs = {
+        meta = {},
+        link = {},
+        img = {},
+        a = {},
+        form = {},
+        input = {},
+    }
+    local current_form_attrs = nil
     local pos = 1
     local dom_len = #dom
 
@@ -274,80 +310,117 @@ local function check_doc(dom, o)
         seen_el[el] = (seen_el[el] or 0) + 1
 
         local tag_end = nil
-        local in_quote = nil
         local cur = tag_name_end + 1
         while cur <= dom_len do
-            local ch = dom:sub(cur, cur)
-            if in_quote then
-                if ch == in_quote then
-                    in_quote = nil
-                end
+            local hit = dom:find("[\"'>]", cur)
+            if not hit then break end
+            local ch = dom:sub(hit, hit)
+            if ch == '>' then
+                tag_end = hit
+                break
             else
-                if ch == '"' or ch == "'" then
-                    in_quote = ch
-                elseif ch == '>' then
-                    tag_end = cur
-                    break
-                end
+                local q_end = dom:find(ch, hit + 1, true)
+                if not q_end then break end
+                cur = q_end + 1
             end
-            cur = cur + 1
         end
 
         if not tag_end then
             pos = tag_name_end + 1
         else
             pos = tag_end + 1
-            if slash == "" then
-                local attrs_str = dom:sub(tag_name_end + 1, tag_end - 1)
-                attrs_str = attrs_str:gsub("/%s*$", "")
+            if slash == "/" then
+                if el == "form" then
+                    current_form_attrs = nil
+                end
+            else
+                open_count[el] = (open_count[el] or 0) + 1
 
-                local allow = {}
-                if element[el] then
-                    for k, v in pairs(global) do allow[k] = v end
-                    if attr[el] then
-                        for _, a in ipairs(attr[el]) do
-                            allow[a:lower()] = true
+                if #el == 2 and el:sub(1, 1) == "h" then
+                    local lvl = tonumber(el:sub(2, 2))
+                    if lvl and lvl >= 1 and lvl <= 6 then
+                        if prev_h > 0 and lvl > prev_h + 1 then
+                            table.insert(heading_bad, string.format("heading hierarchy skips a level: <h%d> followed by <h%d> (9)", prev_h, lvl))
                         end
+                        prev_h = lvl
                     end
                 end
 
-                local a_pos = 1
+                local attrs_str = ""
+                if tag_end > tag_name_end + 1 then
+                    attrs_str = dom:sub(tag_name_end + 1, tag_end - 1)
+                    if attrs_str:find("/", 1, true) then
+                        attrs_str = attrs_str:gsub("/%s*$", "")
+                    end
+                end
+
+                if el == "form" then
+                    current_form_attrs = attrs_str
+                    table.insert(el_attrs.form, attrs_str)
+                elseif el == "input" then
+                    table.insert(el_attrs.input, { attrs = attrs_str, form = current_form_attrs })
+                elseif el == "img" then
+                    table.insert(el_attrs.img, attrs_str)
+                elseif attrs_str ~= "" then
+                    if el == "meta" or el == "link" or el == "a" then
+                        table.insert(el_attrs[el], attrs_str)
+                    end
+                end
+
                 local a_len = #attrs_str
-                while a_pos <= a_len do
-                    local s_idx, e_idx, a_name = attrs_str:find("%s+([a-zA-Z%-]+)", a_pos)
-                    if not s_idx then break end
-                    local after = e_idx + 1
-                    local eq_s, eq_e = attrs_str:find("^%s*=%s*", after)
-                    if eq_e then
-                        after = eq_e + 1
-                        local q = attrs_str:sub(after, after)
-                        if q == '"' or q == "'" then
-                            local q_end = attrs_str:find(q, after + 1, true)
-                            if q_end then
-                                after = q_end + 1
+                if a_len > 0 then
+                    local allow = allowed_attrs[el]
+                    local a_pos = 1
+                    while a_pos <= a_len do
+                        local s_idx, e_idx, a_name = attrs_str:find("%s+([a-zA-Z%-]+)", a_pos)
+                        if not s_idx then break end
+                        local after = e_idx + 1
+                        local val_s, val_e = nil, nil
+                        local eq_s, eq_e = attrs_str:find("^%s*=%s*", after)
+                        if eq_e then
+                            after = eq_e + 1
+                            local q = attrs_str:sub(after, after)
+                            if q == '"' or q == "'" then
+                                local q_end = attrs_str:find(q, after + 1, true)
+                                if q_end then
+                                    val_s, val_e = after + 1, q_end - 1
+                                    after = q_end + 1
+                                else
+                                    after = a_len + 1
+                                end
                             else
-                                after = a_len + 1
-                            end
-                        else
-                            local u_end = attrs_str:find("[%s>]", after)
-                            if u_end then
-                                after = u_end
-                            else
-                                after = a_len + 1
+                                local u_end = attrs_str:find("[%s>]", after)
+                                if u_end then
+                                    val_s, val_e = after, u_end - 1
+                                    after = u_end
+                                else
+                                    val_s, val_e = after, a_len
+                                    after = a_len + 1
+                                end
                             end
                         end
-                    end
-                    a_pos = after
+                        a_pos = after
 
-                    local a = a_name:lower()
-                    if a == "style" then
-                        has_inline_style = true
-                    end
-                    if element[el] and not allow[a] then
-                        local key = el .. "/" .. a
-                        if not reported[key] then
-                            reported[key] = true
-                            table.insert(bad_attrs, string.format("attribute `%s` is not permitted on <%s> (5.1/5.2/5.3)", a, el))
+                        local a = a_name:lower()
+                        if a == "style" then
+                            has_inline_style = true
+                        elseif a == "tabindex" and val_s then
+                            local tv = attrs_str:sub(val_s, val_e):lower()
+                            if tv ~= "0" and tv ~= "-1" then
+                                add_value_bad("tabindex must be 0 or -1 (5.1)")
+                            end
+                        elseif a == "dir" and val_s then
+                            local dv = attrs_str:sub(val_s, val_e):lower()
+                            if dv ~= "ltr" and dv ~= "rtl" then
+                                add_value_bad("dir must be ltr or rtl (5.1)")
+                            end
+                        end
+                        if allow and not allow[a] then
+                            local key = el .. "/" .. a
+                            if not reported[key] then
+                                reported[key] = true
+                                table.insert(bad_attrs, string.format("attribute `%s` is not permitted on <%s> (5.1/5.2/5.3)", a, el))
+                            end
                         end
                     end
                 end
@@ -380,49 +453,37 @@ local function check_doc(dom, o)
             or attrs:match("%f[%w%-]" .. name .. "%s*=%s*([^%s\"'>]+)")
         return v and v:lower()
     end
-    local seen_value_bad = {}
-    local function add_value_bad(msg)
-        if not seen_value_bad[msg] then
-            seen_value_bad[msg] = true
-            table.insert(bad, msg)
+    for _, attrs in ipairs(el_attrs.meta) do
+        local attrs_l = attrs:lower()
+        local name = attr_value(attrs_l, "name")
+        if name and not meta_names[name] then
+            add_value_bad(string.format("meta name `%s` is not permitted (5.2)", name))
+        end
+        if name == "viewport" then
+            local content = attr_value(attrs_l, "content") or ""
+            if content:match("user%-scalable") or content:match("maximum%-scale") then
+                add_value_bad("meta viewport must not set user-scalable or maximum-scale (5.2)")
+            end
+        end
+        local property = attr_value(attrs_l, "property")
+        if property and not property:match("^og:") then
+            add_value_bad(string.format("meta property `%s` is not permitted; only og:* properties are (5.2)", property))
         end
     end
-    for tag, attrs in dom:gmatch("<([a-zA-Z][a-zA-Z0-9]*)(%s[^>]*)>") do
-        local el = tag:lower()
+    for _, attrs in ipairs(el_attrs.link) do
         local attrs_l = attrs:lower()
-        local tabindex = attr_value(attrs_l, "tabindex")
-        if tabindex and tabindex ~= "0" and tabindex ~= "-1" then
-            add_value_bad("tabindex must be 0 or -1 (5.1)")
+        local rel = attr_value(attrs_l, "rel")
+        if rel and not link_rels[rel] then
+            add_value_bad(string.format("link rel `%s` is not permitted (5.2)", rel))
         end
-        local dir = attr_value(attrs_l, "dir")
-        if dir and dir ~= "ltr" and dir ~= "rtl" then
-            add_value_bad("dir must be ltr or rtl (5.1)")
+        local href = attr_value(attrs_l, "href")
+        if href and href:match("^%s*data:") and not (rel == "icon" and href:match("^%s*data:image/png[;,]")) then
+            add_value_bad("`data:` in <link href> is permitted only for a PNG icon (7.1)")
         end
-        if el == "meta" then
-            local name = attr_value(attrs_l, "name")
-            if name and not meta_names[name] then
-                add_value_bad(string.format("meta name `%s` is not permitted (5.2)", name))
-            end
-            if name == "viewport" then
-                local content = attr_value(attrs_l, "content") or ""
-                if content:match("user%-scalable") or content:match("maximum%-scale") then
-                    add_value_bad("meta viewport must not set user-scalable or maximum-scale (5.2)")
-                end
-            end
-            local property = attr_value(attrs_l, "property")
-            if property and not property:match("^og:") then
-                add_value_bad(string.format("meta property `%s` is not permitted; only og:* properties are (5.2)", property))
-            end
-        elseif el == "link" then
-            local rel = attr_value(attrs_l, "rel")
-            if rel and not link_rels[rel] then
-                add_value_bad(string.format("link rel `%s` is not permitted (5.2)", rel))
-            end
-            local href = attr_value(attrs_l, "href")
-            if href and href:match("^%s*data:") and not (rel == "icon" and href:match("^%s*data:image/png[;,]")) then
-                add_value_bad("`data:` in <link href> is permitted only for a PNG icon (7.1)")
-            end
-        elseif el == "input" and attrs_l:match("%f[%w%-]checked%f[^%w%-]") then
+    end
+    for _, inp in ipairs(el_attrs.input) do
+        local attrs_l = inp.attrs:lower()
+        if attrs_l:match("%f[%w%-]checked%f[^%w%-]") then
             local ty = attr_value(attrs_l, "type") or "text"
             if ty ~= "checkbox" and ty ~= "radio" then
                 add_value_bad("`checked` is permitted only on checkbox and radio inputs (5.2)")
@@ -431,15 +492,28 @@ local function check_doc(dom, o)
     end
 
     -- details requires summary as its first child (4.3)
-    for body in dom:gmatch("<[dD][eE][tT][aA][iI][lL][sS]%f[^%w%-][^>]*>(.-)<") do
-        if body:match("%S") then
-            add_value_bad("<details> must have <summary> as its first child (4.3)")
+    local dom_l = nil
+    local function get_dom_l()
+        if not dom_l then dom_l = dom:lower() end
+        return dom_l
+    end
+
+    if open_count["details"] then
+        local dl = get_dom_l()
+        for body in dl:gmatch("<details%f[^%w%-][^>]*>(.-)<") do
+            if body:match("%S") then
+                add_value_bad("<details> must have <summary> as its first child (4.3)")
+            end
+        end
+        for after in dl:gmatch("<details%f[^%w%-][^>]*>%s*(<[^%s>]*)") do
+            if after ~= "<summary" then
+                add_value_bad("<details> must have <summary> as its first child (4.3)")
+            end
         end
     end
-    for after in dom:gmatch("<[dD][eE][tT][aA][iI][lL][sS]%f[^%w%-][^>]*>%s*(<[^%s>]*)") do
-        if after:lower() ~= "<summary" then
-            add_value_bad("<details> must have <summary> as its first child (4.3)")
-        end
+
+    for _, v_err in ipairs(value_bad_list) do
+        table.insert(bad, v_err)
     end
 
     -- inline style attribute
@@ -450,13 +524,15 @@ local function check_doc(dom, o)
 
     -- CSS
     local cp = {}
-    local s_pos = 1
-    while true do
-        local st_s, st_content_s = dom:lower():find("<style[^>]*>", s_pos)
-        if not st_s then break end
-        local end_s, end_e = dom:lower():find("</style%s*>", st_content_s + 1)
-        local blk
-        if end_s then
+    if open_count["style"] then
+        local dl = get_dom_l()
+        local s_pos = 1
+        while true do
+            local st_s, st_content_s = dl:find("<style[^>]*>", s_pos)
+            if not st_s then break end
+            local end_s, end_e = dl:find("</style%s*>", st_content_s + 1)
+            local blk
+            if end_s then
             blk = dom:sub(st_content_s + 1, end_s - 1)
             s_pos = end_e + 1
         else
@@ -464,182 +540,160 @@ local function check_doc(dom, o)
             s_pos = #dom + 1
         end
 
-        blk = blk:gsub("/%*.-%*/", "")
+        if blk:find("/*", 1, true) then
+            blk = blk:gsub("/%*.-%*/", "")
+        end
         local blk_l = blk:lower()
 
-        if blk_l:match("@import") then
+        if blk_l:find("@import", 1, true) then
             table.insert(bad, "@import is forbidden (6.7)")
         end
-        if blk_l:match("!%s*important%f[%A]") then
+        if blk_l:find("important", 1, true) and blk_l:match("!%s*important%f[%A]") then
             table.insert(bad, "!important is forbidden in author style sheets (2.3.4, 6.1)")
         end
 
-        local media_depth = 0
-        local in_media = false
-        local b_pos = 1
-        local blk_len = #blk
+        if blk_l:find("@media", 1, true) then
+            local media_depth = 0
+            local in_media = false
+            local b_pos = 1
+            local blk_len = #blk
 
-        local next_m_s, next_m_e = blk_l:find("@media%f[%A]", 1)
-        local next_u_s, next_u_e = blk_l:find("url%s*%(", 1)
-        local next_l_s = blk:find("{", 1, true)
-        local next_r_s = blk:find("}", 1, true)
+            local next_m_s, next_m_e = blk_l:find("@media%f[%A]", 1)
+            local next_u_s, next_u_e = blk_l:find("url%s*%(", 1)
+            local next_l_s = blk:find("{", 1, true)
+            local next_r_s = blk:find("}", 1, true)
 
-        while b_pos <= blk_len do
-            if next_m_s and next_m_s < b_pos then next_m_s, next_m_e = blk_l:find("@media%f[%A]", b_pos) end
-            if next_u_s and next_u_s < b_pos then next_u_s, next_u_e = blk_l:find("url%s*%(", b_pos) end
-            if next_l_s and next_l_s < b_pos then next_l_s = blk:find("{", b_pos, true) end
-            if next_r_s and next_r_s < b_pos then next_r_s = blk:find("}", b_pos, true) end
+            while b_pos <= blk_len do
+                if next_m_s and next_m_s < b_pos then next_m_s, next_m_e = blk_l:find("@media%f[%A]", b_pos) end
+                if next_u_s and next_u_s < b_pos then next_u_s, next_u_e = blk_l:find("url%s*%(", b_pos) end
+                if next_l_s and next_l_s < b_pos then next_l_s = blk:find("{", b_pos, true) end
+                if next_r_s and next_r_s < b_pos then next_r_s = blk:find("}", b_pos, true) end
 
-            local next_tok = nil
-            local next_s = blk_len + 1
-            local next_e = blk_len + 1
+                local next_tok = nil
+                local next_s = blk_len + 1
+                local next_e = blk_len + 1
 
-            if next_m_s and next_m_s < next_s then next_tok = "@media"; next_s = next_m_s; next_e = next_m_e end
-            if next_u_s and next_u_s < next_s then next_tok = "url"; next_s = next_u_s; next_e = next_u_e end
-            if next_l_s and next_l_s < next_s then next_tok = "{"; next_s = next_l_s; next_e = next_l_s end
-            if next_r_s and next_r_s < next_s then next_tok = "}"; next_s = next_r_s; next_e = next_r_s end
+                if next_m_s and next_m_s < next_s then next_tok = "@media"; next_s = next_m_s; next_e = next_m_e end
+                if next_u_s and next_u_s < next_s then next_tok = "url"; next_s = next_u_s; next_e = next_u_e end
+                if next_l_s and next_l_s < next_s then next_tok = "{"; next_s = next_l_s; next_e = next_l_s end
+                if next_r_s and next_r_s < next_s then next_tok = "}"; next_s = next_r_s; next_e = next_r_s end
 
-            if not next_tok then break end
+                if not next_tok then break end
 
-            if next_tok == "@media" then
-                if in_media then
-                    table.insert(bad, "nested @media rules are forbidden (6.6)")
+                if next_tok == "@media" then
+                    if in_media then
+                        table.insert(bad, "nested @media rules are forbidden (6.6)")
+                    end
+                    in_media = true
+                elseif next_tok == "url" then
+                    if in_media then
+                        table.insert(bad, "url() inside a media-query block is forbidden (6.6)")
+                    end
+                elseif next_tok == "{" then
+                    media_depth = media_depth + 1
+                elseif next_tok == "}" then
+                    media_depth = media_depth - 1
+                    if media_depth <= 0 then
+                        in_media = false
+                    end
                 end
-                in_media = true
-            elseif next_tok == "url" then
-                if in_media then
-                    table.insert(bad, "url() inside a media-query block is forbidden (6.6)")
+                b_pos = next_e + 1
+            end
+
+            for cond in blk_l:gmatch("@media%s*([^{]*){") do
+                -- words outside parentheses are media types, modifiers, or `and`
+                for word in cond:gsub("%b()", " "):gmatch("[%a%-]+") do
+                    if word == "not" or word == "only" then
+                        table.insert(bad, "the `not` and `only` media query modifiers are forbidden (6.6)")
+                    elseif word ~= "and" and word ~= "print" then
+                        table.insert(bad, "media types other than print are forbidden in @media (6.6)")
+                    end
                 end
-            elseif next_tok == "{" then
-                media_depth = media_depth + 1
-            elseif next_tok == "}" then
-                media_depth = media_depth - 1
-                if media_depth <= 0 then
-                    in_media = false
+                for group in cond:gmatch("%b()") do
+                    if group:match("[<>=]") then
+                        table.insert(bad, "media query range syntax is forbidden; use min-width or max-width (6.6)")
+                    end
+                end
+                for feat in cond:gmatch("%(%s*([%-a-z]+)%s*[:)]") do
+                    if feat ~= "width" and feat ~= "min-width" and feat ~= "max-width" and feat ~= "prefers-color-scheme" then
+                        table.insert(bad, string.format("media feature `%s` is not permitted (6.6)", feat))
+                    end
+                end
+                for scheme in cond:gmatch("prefers%-color%-scheme%s*:%s*([%a%-]+)") do
+                    if scheme ~= "light" and scheme ~= "dark" then
+                        table.insert(bad, "prefers-color-scheme must be light or dark (6.6)")
+                    end
                 end
             end
-            b_pos = next_e + 1
         end
 
-        for cond in blk:gmatch("@[mM][eE][dD][iI][aA]%s*([^{]*){") do
-            local cond_l = cond:lower()
-            -- words outside parentheses are media types, modifiers, or `and`
-            for word in cond_l:gsub("%b()", " "):gmatch("[%a%-]+") do
-                if word == "not" or word == "only" then
-                    table.insert(bad, "the `not` and `only` media query modifiers are forbidden (6.6)")
-                elseif word ~= "and" and word ~= "print" then
-                    table.insert(bad, "media types other than print are forbidden in @media (6.6)")
-                end
-            end
-            for group in cond_l:gmatch("%b()") do
-                if group:match("[<>=]") then
-                    table.insert(bad, "media query range syntax is forbidden; use min-width or max-width (6.6)")
-                end
-            end
-            for feat in cond_l:gmatch("%(%s*([%-a-z]+)%s*[:)]") do
-                if feat ~= "width" and feat ~= "min-width" and feat ~= "max-width" and feat ~= "prefers-color-scheme" then
-                    table.insert(bad, string.format("media feature `%s` is not permitted (6.6)", feat))
-                end
-            end
-            for scheme in cond_l:gmatch("prefers%-color%-scheme%s*:%s*([%a%-]+)") do
-                if scheme ~= "light" and scheme ~= "dark" then
-                    table.insert(bad, "prefers-color-scheme must be light or dark (6.6)")
-                end
-            end
-        end
-
-        if blk_l:match("@keyframes%f[%A]") or blk_l:match("@%-webkit%-keyframes%f[%A]") then
+        if blk_l:find("keyframes", 1, true) and (blk_l:match("@keyframes%f[%A]") or blk_l:match("@%-webkit%-keyframes%f[%A]")) then
             table.insert(bad, "@keyframes is forbidden (6.7)")
         end
 
-        if blk_l:match("%f[%a]linear%-gradient%s*%(") or blk_l:match("%f[%a]radial%-gradient%s*%(")
-           or blk_l:match("%f[%a]conic%-gradient%s*%(") or blk_l:match("%f[%a]repeating%-linear%-gradient%s*%(")
-           or blk_l:match("%f[%a]repeating%-radial%-gradient%s*%(") or blk_l:match("%f[%a]repeating%-conic%-gradient%s*%(") then
-            table.insert(bad, "gradients are forbidden (6.7)")
+        if blk_l:find("gradient", 1, true) then
+            if blk_l:match("%f[%a]linear%-gradient%s*%(") or blk_l:match("%f[%a]radial%-gradient%s*%(")
+               or blk_l:match("%f[%a]conic%-gradient%s*%(") or blk_l:match("%f[%a]repeating%-linear%-gradient%s*%(")
+               or blk_l:match("%f[%a]repeating%-radial%-gradient%s*%(") or blk_l:match("%f[%a]repeating%-conic%-gradient%s*%(") then
+                table.insert(bad, "gradients are forbidden (6.7)")
+            end
         end
-        if blk_l:match("%f[%a]var%s*%(") then
+        if blk_l:find("var", 1, true) and blk_l:match("%f[%a]var%s*%(") then
             table.insert(bad, "var() is forbidden; custom properties are outside the subset (6.7)")
         end
 
-        if blk_l:match("@font%-face[^}]*local%s*%(") then
-            table.insert(bad, "local() in @font-face is forbidden (6.5)")
-        end
-        if blk_l:match("@font%-face[^{]*{[^}]*src%s*:[^;}]*url%s*%(%s*[\"']?https?://") then
-            table.insert(bad, "cross-origin URL in @font-face src is forbidden (6.5, 7.3)")
-        end
-
-        if blk_l:match("grid%-template%-areas%s*:") then
-            table.insert(bad, "grid-template-areas is forbidden; grid is a bounded subset (6.2, 6.7)")
-        end
-        if blk_l:match("grid%-auto%-flow%s*:") then
-            table.insert(bad, "grid-auto-flow is forbidden; grid is a bounded subset (6.2, 6.7)")
-        end
-        if blk_l:match("grid%-auto%-rows%s*:") or blk_l:match("grid%-auto%-columns%s*:") then
-            table.insert(bad, "grid-auto-rows/grid-auto-columns are forbidden; implicit tracks are outside the subset (6.2, 6.7)")
-        end
-        if blk_l:match("repeat%s*%(%s*auto%-fill%f[%A]") or blk_l:match("repeat%s*%(%s*auto%-fit%f[%A]") then
-            table.insert(bad, "repeat() with auto-fill or auto-fit is forbidden; use a literal count (6.2, 6.7)")
-        end
-        for count_str in blk_l:gmatch("repeat%s*%(%s*(%d+)%s*,") do
-            local c = tonumber(count_str)
-            if c and c > 10000 then
-                table.insert(bad, string.format("repeat(%s) exceeds the 10,000 track bound (2.3.18, 6.2)", count_str))
+        if blk_l:find("@font-face", 1, true) then
+            if blk_l:match("@font%-face[^}]*local%s*%(") then
+                table.insert(bad, "local() in @font-face is forbidden (6.5)")
+            end
+            if blk_l:match("@font%-face[^{]*{[^}]*src%s*:[^;}]*url%s*%(%s*[\"']?https?://") then
+                table.insert(bad, "cross-origin URL in @font-face src is forbidden (6.5, 7.3)")
             end
         end
-        if blk_l:match("grid%-template[^;{}]*%f[%a]fit%-content%s*%(") then
-            table.insert(bad, "fit-content() is forbidden in a track list (6.2, 6.7)")
-        end
-        if blk_l:match("grid%-template[^;{}]*%f[%a]subgrid%f[%A]") then
-            table.insert(bad, "subgrid is forbidden (6.2, 6.7)")
-        end
-        if blk_l:match("display%s*:%s*inline%-grid%f[%A]") then
-            table.insert(bad, "display: inline-grid is forbidden; only `grid` is permitted (6.2)")
-        end
 
-        for u in blk:gmatch("[uU][rR][lL]%s*%(%s*[\"']?([^\"')]+)") do
-            local u_l = u:lower()
-            if u_l:match("^https?://") or u_l:match("^//") then
-                table.insert(bad, "absolute URL in url(): subresources must be same-origin, and a validator cannot resolve the document's origin — use a relative URL (2.3.15, 7.2)")
+        if blk_l:find("grid", 1, true) then
+            if blk_l:match("grid%-template%-areas%s*:") then
+                table.insert(bad, "grid-template-areas is forbidden; grid is a bounded subset (6.2, 6.7)")
             end
-            local mime = u_l:match("^data:([^;,]+)")
-            if mime then
-                if mime ~= "image/png" and mime ~= "image/jpeg" then
-                    table.insert(bad, "data: URL in url() must be image/png or image/jpeg (7.1, 7.4)")
+            if blk_l:match("grid%-auto%-flow%s*:") then
+                table.insert(bad, "grid-auto-flow is forbidden; grid is a bounded subset (6.2, 6.7)")
+            end
+            if blk_l:match("grid%-auto%-rows%s*:") or blk_l:match("grid%-auto%-columns%s*:") then
+                table.insert(bad, "grid-auto-rows/grid-auto-columns are forbidden; implicit tracks are outside the subset (6.2, 6.7)")
+            end
+            if blk_l:match("grid%-template[^;{}]*%f[%a]fit%-content%s*%(") then
+                table.insert(bad, "fit-content() is forbidden in a track list (6.2, 6.7)")
+            end
+            if blk_l:match("grid%-template[^;{}]*%f[%a]subgrid%f[%A]") then
+                table.insert(bad, "subgrid is forbidden (6.2, 6.7)")
+            end
+            if blk_l:match("display%s*:%s*inline%-grid%f[%A]") then
+                table.insert(bad, "display: inline-grid is forbidden; only `grid` is permitted (6.2)")
+            end
+        end
+        if blk_l:find("repeat", 1, true) then
+            if blk_l:match("repeat%s*%(%s*auto%-fill%f[%A]") or blk_l:match("repeat%s*%(%s*auto%-fit%f[%A]") then
+                table.insert(bad, "repeat() with auto-fill or auto-fit is forbidden; use a literal count (6.2, 6.7)")
+            end
+            for count_str in blk_l:gmatch("repeat%s*%(%s*(%d+)%s*,") do
+                local c = tonumber(count_str)
+                if c and c > 10000 then
+                    table.insert(bad, string.format("repeat(%s) exceeds the 10,000 track bound (2.3.18, 6.2)", count_str))
                 end
             end
         end
 
-        local clean_blk = blk
-        clean_blk = clean_blk:gsub("@[fF][oO][nN][tT]%-[fF][aA][cC][eE]%s*{[^{}]*}", "")
-        clean_blk = clean_blk:gsub("[uU][rR][lL]%s*%([^)]*%)", "")
-        clean_blk = clean_blk:gsub('"(.-)"', function(s) return '""' end)
-        clean_blk = clean_blk:gsub("'(.-)'", function(s) return "''" end)
-
-        for vdecls in clean_blk:gmatch(":[vV][iI][sS][iI][tT][eE][dD]%s*{([^{}]*)}") do
-            if vdecls:lower():match("background%-image%s*:") then
-                table.insert(bad, "background-image in :visited is forbidden (6.3)")
-            end
-            for vp in vdecls:gmatch("([%-a-zA-Z]+)%s*:") do
-                local v_l = vp:lower()
-                if v_l ~= "color" and v_l ~= "background-color" and v_l ~= "border-color" and v_l ~= "outline-color" then
-                    table.insert(bad, string.format("property `%s` in :visited is forbidden; only color properties are permitted (6.3)", v_l))
+        if blk_l:find("url", 1, true) then
+            for u in blk:gmatch("[uU][rR][lL]%s*%(%s*[\"']?([^\"')]+)") do
+                local u_l = u:lower()
+                if u_l:match("^https?://") or u_l:match("^//") then
+                    table.insert(bad, "absolute URL in url(): subresources must be same-origin, and a validator cannot resolve the document's origin — use a relative URL (2.3.15, 7.2)")
                 end
-            end
-        end
-
-        for sel1, sel2, fdecls in clean_blk:gmatch("([^{}]*):[fF][oO][cC][uU][sS]%f[%A]([^{}]*){([^{}]*)}") do
-            local f_l = fdecls:lower()
-            local removes_outline = f_l:match("outline%s*:%s*none")
-                or f_l:match("outline%-style%s*:%s*none")
-                or f_l:match("outline%-width%s*:%s*0%f[^.0-9]")
-                or f_l:match("outline%s*:[^;]*%f[%w]0%f[%W]")
-            if removes_outline then
-                local has_indicator = f_l:match("%f[%a]background%-color%s*:")
-                    or f_l:match("%f[%a]border%s*:")
-                    or f_l:match("%f[%a]border%-[a-z]+%s*:")
-                    or f_l:match("%f[%a]color%s*:")
-                if not has_indicator then
-                    table.insert(bad, "a :focus rule removes the outline without establishing another visible indicator (9)")
+                local mime = u_l:match("^data:([^;,]+)")
+                if mime then
+                    if mime ~= "image/png" and mime ~= "image/jpeg" then
+                        table.insert(bad, "data: URL in url() must be image/png or image/jpeg (7.1, 7.4)")
+                    end
                 end
             end
         end
@@ -654,35 +708,73 @@ local function check_doc(dom, o)
         end
 
         for _, r in ipairs(rules) do
-            local sel = r.sel:gsub("%[[^%]]*%]", "")
-            for pe in sel:gmatch("::([%a%-]+)") do
-                local pe_l = pe:lower()
-                if not allowed_pseudo_elements[pe_l] then
-                    add_rule_bad(string.format("selector ::%s is forbidden (6.3)", pe_l))
+            if r.sel:find(":", 1, true) then
+                local sel = r.sel
+                if sel:find("[", 1, true) then
+                    sel = sel:gsub("%[[^%]]*%]", "")
                 end
-            end
-            local s_single = sel:gsub("::[%a%-]+", "")
-            for pc in s_single:gmatch(":([%a%-]+)") do
-                local pc_l = pc:lower()
-                if pc_l == "has" or pc_l == "is" or pc_l == "where" then
-                    add_rule_bad(string.format("selector :%s() is forbidden (6.7)", pc_l))
-                elseif not allowed_pseudo_classes[pc_l] then
-                    add_rule_bad(string.format("selector :%s is forbidden (6.3)", pc_l))
+                local sel_l = sel:lower()
+
+                if sel_l:find(":visited", 1, true) and sel_l:match(":visited%f[%A]") then
+                    local vdecls_l = r.decls:lower()
+                    if vdecls_l:match("background%-image%s*:") then
+                        table.insert(bad, "background-image in :visited is forbidden (6.3)")
+                    end
+                    for vp in vdecls_l:gmatch("([%-a-z]+)%s*:") do
+                        if vp ~= "color" and vp ~= "background-color" and vp ~= "border-color" and vp ~= "outline-color" then
+                            table.insert(bad, string.format("property `%s` in :visited is forbidden; only color properties are permitted (6.3)", vp))
+                        end
+                    end
                 end
-            end
-            for nth_arg in sel:gmatch(":[nN][tT][hH]%-[cC][hH][iI][lL][dD]%s*%(([^)]*)%)") do
-                local a = nth_arg:gsub("%s+", ""):lower()
-                local valid = (a == "odd" or a == "even" or a:match("^[+-]?%d+$") or a:match("^[+-]?%d*n$") or a:match("^[+-]?%d*n[+-]%d+$"))
-                if not valid then
-                    add_rule_bad(string.format("invalid :nth-child argument `%s` (6.3)", nth_arg))
+
+                if sel_l:find(":focus", 1, true) and sel_l:match(":focus%f[%A]") then
+                    local f_l = r.decls:lower()
+                    local removes_outline = f_l:match("outline%s*:%s*none")
+                        or f_l:match("outline%-style%s*:%s*none")
+                        or f_l:match("outline%-width%s*:%s*0%f[^.0-9]")
+                        or f_l:match("outline%s*:[^;]*%f[%w]0%f[%W]")
+                    if removes_outline then
+                        local has_indicator = f_l:match("%f[%a]background%-color%s*:")
+                            or f_l:match("%f[%a]border%s*:")
+                            or f_l:match("%f[%a]border%-[a-z]+%s*:")
+                            or f_l:match("%f[%a]color%s*:")
+                        if not has_indicator then
+                            table.insert(bad, "a :focus rule removes the outline without establishing another visible indicator (9)")
+                        end
+                    end
+                end
+
+                local s_single = sel_l
+                if sel_l:find("::", 1, true) then
+                    for pe in sel_l:gmatch("::([%a%-]+)") do
+                        if not allowed_pseudo_elements[pe] then
+                            add_rule_bad(string.format("selector ::%s is forbidden (6.3)", pe))
+                        end
+                    end
+                    s_single = sel_l:gsub("::[%a%-]+", "")
+                end
+                for pc in s_single:gmatch(":([%a%-]+)") do
+                    if pc == "has" or pc == "is" or pc == "where" then
+                        add_rule_bad(string.format("selector :%s() is forbidden (6.7)", pc))
+                    elseif not allowed_pseudo_classes[pc] then
+                        add_rule_bad(string.format("selector :%s is forbidden (6.3)", pc))
+                    end
+                end
+                if sel_l:find(":nth-child", 1, true) then
+                    for nth_arg in sel:gmatch(":[nN][tT][hH]%-[cC][hH][iI][lL][dD]%s*%(([^)]*)%)") do
+                        local a = nth_arg:gsub("%s+", ""):lower()
+                        local valid = (a == "odd" or a == "even" or a:match("^[+-]?%d+$") or a:match("^[+-]?%d*n$") or a:match("^[+-]?%d*n[+-]%d+$"))
+                        if not valid then
+                            add_rule_bad(string.format("invalid :nth-child argument `%s` (6.3)", nth_arg))
+                        end
+                    end
                 end
             end
 
             for stmt in (r.decls .. ";"):gmatch("([^;]+);") do
-                local colon = stmt:find(":", 1, true)
-                if colon then
-                    local pname = stmt:sub(1, colon - 1):gsub("^%s+", ""):gsub("%s+$", ""):lower()
-                    local pval = stmt:sub(colon + 1):gsub("^%s+", ""):gsub("%s+$", "")
+                local pname, pval = stmt:match("^%s*([^:]-)%s*:%s*(.-)%s*$")
+                if pname then
+                    pname = pname:lower()
                     local val_l = pval:lower()
 
                     if pname ~= "" then
@@ -712,57 +804,69 @@ local function check_doc(dom, o)
                         if not css_wide and val_l ~= '""' and val_l ~= "''" and val_l ~= "none" and val_l ~= "normal" then
                             add_rule_bad("content value must be a quoted string, none, or normal (6.2)")
                         end
+                    elseif pname == "border-radius" then
+                        if pval:find("/", 1, true) then
+                            add_rule_bad("slash syntax in border-radius is forbidden (6.2)")
+                        end
+                    elseif pname == "list-style" then
+                        if val_l:find("url", 1, true) and val_l:match("%f[%a]url%s*%(") then
+                            add_rule_bad("url() in list-style is forbidden (6.2)")
+                        end
+                    elseif pname == "background-image" then
+                        if not css_wide and val_l ~= "none" and not (val_l:find("url", 1, true) and val_l:match("%f[%a]url%s*%(")) then
+                            add_rule_bad("background-image must be a URL or none (6.2)")
+                        end
+                    elseif pname == "clip-path" then
+                        if not css_wide and val_l ~= "none" and not val_l:match("^inset%s*%(") and not val_l:match("^rect%s*%(") then
+                            add_rule_bad(string.format("value `%s` is not permitted for `clip-path` (6.2)", pval))
+                        end
                     end
-                    if pname == "border-radius" and pval:find("/", 1, true) then
-                        add_rule_bad("slash syntax in border-radius is forbidden (6.2)")
-                    end
-                    if pname == "list-style" and val_l:match("%f[%a]url%s*%(") then
-                        add_rule_bad("url() in list-style is forbidden (6.2)")
-                    end
-                    if pname == "background-image" and not css_wide and val_l ~= "none" and not val_l:match("%f[%a]url%s*%(") then
-                        add_rule_bad("background-image must be a URL or none (6.2)")
-                    end
-                    if pname == "clip-path" and not css_wide and val_l ~= "none" and not val_l:match("^inset%s*%(") and not val_l:match("^rect%s*%(") then
-                        add_rule_bad(string.format("value `%s` is not permitted for `clip-path` (6.2)", pval))
-                    end
-                    if pname ~= "grid-template-columns" and pname ~= "grid-template-rows" and val_l:match("%f[%a]fit%-content%s*%(") then
+                    if val_l:find("fit-content", 1, true) and pname ~= "grid-template-columns" and pname ~= "grid-template-rows" and val_l:match("%f[%a]fit%-content%s*%(") then
                         add_rule_bad("fit-content() is forbidden (6.2, 6.7)")
                     end
 
-                    local s_unit = pval:gsub("#%x+", " ")
-                    s_unit = s_unit:gsub("[uU][rR][lL]%s*%([^)]*%)", " ")
-                    local pos = 1
-                    while pos <= #s_unit do
-                        local s_idx, e_idx, num, u = s_unit:find("([0-9]*%.?[0-9]+)([%a%%]+)", pos)
-                        if not s_idx then break end
-                        local prev = s_idx > 1 and s_unit:sub(s_idx - 1, s_idx - 1) or " "
-                        local is_ident = false
-                        if prev:match("[%a_]") then
-                            is_ident = true
-                        elseif prev == "-" then
-                            local p2 = s_idx > 2 and s_unit:sub(s_idx - 2, s_idx - 2) or " "
-                            if p2:match("[%a_%-]") then
-                                is_ident = true
-                            end
+                    if pval:find("%d") then
+                        local s_unit = pval
+                        if s_unit:find("#", 1, true) then
+                            s_unit = s_unit:gsub("#%x+", " ")
                         end
-                        if not is_ident then
-                            local ul = u:lower()
-                            local is_allowed = allowed_units[ul]
-                            if ul == "fr" and (pname == "grid-template-columns" or pname == "grid-template-rows") then
-                                is_allowed = true
-                            end
-                            if not is_allowed then
-                                if ul == "fr" then
-                                    add_rule_bad("unit `fr` is permitted only in grid track lists (6.2, 6.4)")
-                                else
-                                    add_rule_bad(string.format("unit `%s` is not permitted (6.4)", u))
+                        if val_l:find("url", 1, true) then
+                            s_unit = s_unit:gsub("[uU][rR][lL]%s*%([^)]*%)", " ")
+                        end
+                        local pos = 1
+                        while pos <= #s_unit do
+                            local s_idx, e_idx, num, u = s_unit:find("([0-9]*%.?[0-9]+)([%a%%]+)", pos)
+                            if not s_idx then break end
+                            local prev = s_idx > 1 and s_unit:sub(s_idx - 1, s_idx - 1) or " "
+                            local is_ident = false
+                            if prev:match("[%a_]") then
+                                is_ident = true
+                            elseif prev == "-" then
+                                local p2 = s_idx > 2 and s_unit:sub(s_idx - 2, s_idx - 2) or " "
+                                if p2:match("[%a_%-]") then
+                                    is_ident = true
                                 end
                             end
+                            if not is_ident then
+                                local ul = u:lower()
+                                local is_allowed = allowed_units[ul]
+                                if ul == "fr" and (pname == "grid-template-columns" or pname == "grid-template-rows") then
+                                    is_allowed = true
+                                end
+                                if not is_allowed then
+                                    if ul == "fr" then
+                                        add_rule_bad("unit `fr` is permitted only in grid track lists (6.2, 6.4)")
+                                    else
+                                        add_rule_bad(string.format("unit `%s` is not permitted (6.4)", u))
+                                    end
+                                end
+                            end
+                            pos = e_idx + 1
                         end
-                        pos = e_idx + 1
                     end
                 end
             end
+        end
         end
     end
 
@@ -779,43 +883,33 @@ local function check_doc(dom, o)
 
     -- document structure (whole documents only; a 2.5 noscript body has none)
     if not o.fragment then
-        if not dom:lower():match("<!doctype%s+html%s*>") then
+        local dl = get_dom_l()
+        if not dl:match("<!doctype%s+html%s*>") then
             table.insert(bad, "missing <!DOCTYPE html> (4.1)")
         end
-        if not dom:lower():match("<html[^>]*%slang%s*=") then
+        if not dl:match("<html[^>]*%slang%s*=") then
             table.insert(bad, "<html> requires lang (4.1)")
         end
-        if not dom:lower():match("<meta[^>]*charset%s*=%s*[\"']?utf%-8") then
+        if not dl:match("<meta[^>]*charset%s*=%s*[\"']?utf%-8") then
             table.insert(bad, "missing <meta charset=\"utf-8\"> (4.2)")
         end
-        local titles = 0
-        for _ in dom:gmatch("<[tT][iI][tT][lL][eE][%s>]") do
-            titles = titles + 1
-        end
+        local titles = open_count["title"] or 0
         if titles ~= 1 then
             table.insert(bad, string.format("expected exactly one <title>, found %d (4.3)", titles))
         end
-        local mains = 0
-        for _ in dom:gmatch("<[mM][aA][iI][nN][%s>]") do
-            mains = mains + 1
-        end
+        local mains = open_count["main"] or 0
         if mains > 1 then
             table.insert(bad, string.format("at most one <main> per document, found %d (4.3)", mains))
         end
 
         -- heading hierarchy (9)
-        local prev_h = 0
-        for h in dom:gmatch("<[hH]([1-6])[%s>]") do
-            local lvl = tonumber(h)
-            if prev_h > 0 and lvl > prev_h + 1 then
-                table.insert(bad, string.format("heading hierarchy skips a level: <h%d> followed by <h%d> (9)", prev_h, lvl))
-            end
-            prev_h = lvl
+        for _, h_err in ipairs(heading_bad) do
+            table.insert(bad, h_err)
         end
     end
 
     -- images, forms, inputs
-    for a in dom:gmatch("<[iI][mM][gG]([^>]*)>") do
+    for _, a in ipairs(el_attrs.img) do
         local a_l = a:lower()
         if not a_l:match("%salt%s*=") then
             table.insert(bad, "<img> requires alt (5.2, 9)")
@@ -840,7 +934,7 @@ local function check_doc(dom, o)
     end
 
     -- subresources referenced by <link>: origin, and the icon format baseline
-    for a in dom:gmatch("<[lL][iI][nN][kK]([^>]*)>") do
+    for _, a in ipairs(el_attrs.link) do
         local rel = a:match("%f[%a][rR][eE][lL]%s*=%s*[\"']?([a-zA-Z%-]+)")
         rel = (rel or ""):lower()
         local href = a:match("%f[%a][hH][rR][eE][fF]%s*=%s*[\"']?([^\"'>%s]+)")
@@ -862,18 +956,23 @@ local function check_doc(dom, o)
 
     -- navigation positions take any registered scheme except script URLs and
     -- local-file navigation; document data: URLs stay out (7.1)
-    for sch in dom:gmatch("<[aA]%f[%A][^>]*%f[%a][hH][rR][eE][fF]%s*=%s*[\"']?([a-zA-Z0-9%+%.%-]+):") do
-        local s = sch:lower()
-        if s == "javascript" or s == "vbscript" then
-            table.insert(bad, string.format("URL scheme `%s:` is script execution in a URL and is forbidden (7.1)", s))
-        elseif s == "file" then
-            table.insert(bad, "`file:` must not be navigated to from a remote document (7.1)")
-        elseif s == "data" then
-            table.insert(bad, "`data:` is permitted only for images in src or url(), not for navigation (7.1)")
+    for _, a in ipairs(el_attrs.a) do
+        if a:find(":", 1, true) then
+            local sch = a:match("%f[%a][hH][rR][eE][fF]%s*=%s*[\"']?([a-zA-Z0-9%+%.%-]+):")
+            if sch then
+                local s = sch:lower()
+                if s == "javascript" or s == "vbscript" then
+                    table.insert(bad, string.format("URL scheme `%s:` is script execution in a URL and is forbidden (7.1)", s))
+                elseif s == "file" then
+                    table.insert(bad, "`file:` must not be navigated to from a remote document (7.1)")
+                elseif s == "data" then
+                    table.insert(bad, "`data:` is permitted only for images in src or url(), not for navigation (7.1)")
+                end
+            end
         end
     end
 
-    for a in dom:gmatch("<[fF][oO][rR][mM]([^>]*)>") do
+    for _, a in ipairs(el_attrs.form) do
         local a_l = a:lower()
         if not a_l:match("%saction%s*=") then
             table.insert(bad, "<form> requires action (5.2)")
@@ -891,11 +990,16 @@ local function check_doc(dom, o)
         end
     end
 
-    for a in dom:gmatch("<[iI][nN][pP][uU][tT]([^>]*)>") do
+    local labelable = 0
+    for _, inp in ipairs(el_attrs.input) do
+        local a = inp.attrs
         local ty = a:match("[tT][yY][pP][eE]%s*=%s*[\"']?([a-zA-Z]+)")
         ty = (ty or "text"):lower()
         if not itype[ty] then
             table.insert(bad, string.format("input type=\"%s\" is not permitted (5.2)", ty))
+        end
+        if ty ~= "submit" and ty ~= "reset" and ty ~= "hidden" and ty ~= "button" and ty ~= "image" then
+            labelable = labelable + 1
         end
         local auto = a:match("[aA][uU][tT][oO][cC][oO][mM][pP][lL][eE][tT][eE]%s*=%s*[\"']?([a-zA-Z%-]+)")
         if auto then
@@ -911,46 +1015,14 @@ local function check_doc(dom, o)
             end
         end
         if ty == "password" then
-            local escaped_a = a:gsub("([%(%)%.%%%+%-%*%?%[%^%$%]])", "%%%1")
-            local form_str = dom:match("(<[fF][oO][rR][mM][^>]*>[^<]*<[iI][nN][pP][uU][tT]" .. escaped_a .. ">)")
-            if not form_str then
-                local input_pos = dom:find("<[iI][nN][pP][uU][tT]" .. escaped_a .. ">")
-                if input_pos then
-                    local before = dom:sub(1, input_pos)
-                    local last_form_s, last_form_e = nil, nil
-                    local p = 1
-                    while true do
-                        local fs, fe = before:lower():find("<form[^>]*>", p)
-                        if not fs then break end
-                        last_form_s, last_form_e = fs, fe
-                        p = fe + 1
-                    end
-                    if last_form_s then
-                        local between = before:sub(last_form_e + 1)
-                        if not between:lower():find("</form>") then
-                            form_str = before:sub(last_form_s, last_form_e)
-                        end
-                    end
-                end
-            end
+            local form_str = inp.form
             if not (form_str and form_str:lower():match("action%s*=%s*[\"']?https:")) then
                 table.insert(bad, "a form containing a password field requires an https action (5.2)")
             end
         end
     end
 
-    local labelable = 0
-    for a in dom:gmatch("<[iI][nN][pP][uU][tT]([^>]*)>") do
-        local ty = a:match("[tT][yY][pP][eE]%s*=%s*[\"']?([a-zA-Z]+)")
-        ty = (ty or "text"):lower()
-        if ty ~= "submit" and ty ~= "reset" and ty ~= "hidden" and ty ~= "button" and ty ~= "image" then
-            labelable = labelable + 1
-        end
-    end
-    local labels = 0
-    for _ in dom:gmatch("<[lL][aA][bB][eE][lL][%s>]") do
-        labels = labels + 1
-    end
+    local labels = open_count["label"] or 0
     if labels < labelable then
         table.insert(bad, string.format("%d labelable inputs but only %d <label> elements (9)", labelable, labels))
     end
@@ -964,13 +1036,18 @@ end
 -- check over what remains, and run the sections 4-9 checks over the `noscript`
 -- content.
 local function classify(dom)
-    local has_script = (dom:lower():match("<script[%s>]") ~= nil)
-    local has_noscript = (dom:lower():match("<noscript[%s>]") ~= nil)
+    local dom_l = dom:lower()
+    local has_script = (dom_l:match("<script[%s>]") ~= nil)
+    local has_noscript = (dom_l:match("<noscript[%s>]") ~= nil)
 
     local core = dom
-    core = core:gsub("<[sS][cC][rR][iI][pP][tT]%f[%A][^>]*>.-</[sS][cC][rR][iI][pP][tT]%s*>", "")
-    core = core:gsub("<[sS][cC][rR][iI][pP][tT]%f[%A][^>]*%/?>", "")
-    core = core:gsub("<[nN][oO][sS][cC][rR][iI][pP][tT]%f[%A][^>]*>.-</[nN][oO][sS][cC][rR][iI][pP][tT]%s*>", "")
+    if has_script then
+        core = core:gsub("<[sS][cC][rR][iI][pP][tT]%f[%A][^>]*>.-</[sS][cC][rR][iI][pP][tT]%s*>", "")
+        core = core:gsub("<[sS][cC][rR][iI][pP][tT]%f[%A][^>]*%/?>", "")
+    end
+    if has_noscript then
+        core = core:gsub("<[nN][oO][sS][cC][rR][iI][pP][tT]%f[%A][^>]*>.-</[nN][oO][sS][cC][rR][iI][pP][tT]%s*>", "")
+    end
     local core_bad = check_doc(core)
 
     local ns_parts = {}
@@ -1046,8 +1123,13 @@ local function shell_quote(s)
 end
 
 local function is_dir(path)
-    local ok = os.execute("test -d " .. shell_quote(path))
-    return ok == true or ok == 0
+    local f = io.open(path, "r")
+    if not f then
+        return false
+    end
+    local _, rerr = f:read(0)
+    f:close()
+    return rerr ~= nil
 end
 
 local function is_target_file(path, css_only)
@@ -1146,7 +1228,9 @@ for _, file in ipairs(files) do
 
         local is_css = force_css or (file:lower():match("%.css$") ~= nil)
         local dom = is_css and as_document(h) or h
-        dom = dom:gsub("<!%-%-.-%-%->", "")
+        if dom:find("<!--", 1, true) then
+            dom = dom:gsub("<!%-%-.-%-%->", "")
+        end
 
         if classify_opt and not is_css then
             local state, why = classify(dom)
